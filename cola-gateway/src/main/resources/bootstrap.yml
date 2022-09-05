@@ -10,10 +10,11 @@ spring:
         locator:
           enabled: true
           lower-case-service-id: true
-
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
       config:
         server-addr: 127.0.0.1:8848
-        file-extension: yml
+        shared-configs:
+          - data-id: cola-admin
+            group: DEFAULT_GROUP

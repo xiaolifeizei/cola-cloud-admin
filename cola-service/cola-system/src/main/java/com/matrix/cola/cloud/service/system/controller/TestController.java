@@ -14,6 +14,7 @@ public class TestController {
 
     @GetMapping("/test")
     public String test() {
+        int a = 1 / 0;
         return "TTTTTT";
     }
 }

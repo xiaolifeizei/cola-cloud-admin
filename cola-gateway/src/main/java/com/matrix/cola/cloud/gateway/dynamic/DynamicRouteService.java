@@ -57,7 +57,7 @@ public class DynamicRouteService implements ApplicationEventPublisherAware {
 	 */
 	public String update(RouteDefinition definition) {
 		try {
-			this.routeDefinitionWriter.delete(Mono.just(definition.getId()));
+			// this.routeDefinitionWriter.delete(Mono.just(definition.getId()));
 			this.routeDefinitionWriter.save(Mono.just(definition)).subscribe();
 			this.publisher.publishEvent(new RefreshRoutesEvent(this));
 			return "update success";
@@ -71,11 +71,8 @@ public class DynamicRouteService implements ApplicationEventPublisherAware {
 	 * 更新路由
 	 */
 	public String updateList(List<RouteDefinition> routeDefinitions) {
-		if (ObjectUtil.isEmpty(routeDefinitions)) {
-			Flux<RouteDefinition> fluxRouteDefinitions = routeDefinitionRepository.getRouteDefinitions();
-			fluxRouteDefinitions.subscribe(r -> delete(r.getId()));
-			return "update done";
-		}
+		Flux<RouteDefinition> fluxRouteDefinitions = routeDefinitionRepository.getRouteDefinitions();
+		fluxRouteDefinitions.subscribe(r -> delete(r.getId()));
 		routeDefinitions.forEach(this::update);
 		return "update done";
 	}
