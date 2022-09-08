@@ -12,9 +12,8 @@
     <artifactId>cola-api</artifactId>
 
     <modules>
+        <module>cola-api-common</module>
         <module>cola-api-system</module>
     </modules>
-
-
 
 </project>
