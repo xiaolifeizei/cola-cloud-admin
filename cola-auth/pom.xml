@@ -11,10 +11,11 @@
 
     <artifactId>cola-auth</artifactId>
 
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>com.matrix.cola.cloud</groupId>
+            <artifactId>cola-common</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>
