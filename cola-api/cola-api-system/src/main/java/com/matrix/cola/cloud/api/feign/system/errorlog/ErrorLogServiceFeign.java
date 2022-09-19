@@ -10,6 +10,6 @@ import org.springframework.cloud.openfeign.FeignClient;
  * @author : cui_feng
  * @since : 2022-09-08 11:07
  */
-@FeignClient(value = "cola-system",contextId = "system-errorLog-client")
+@FeignClient(value = "cola-system",contextId = "system-errorLog-client", path = "errorLog")
 public interface ErrorLogServiceFeign extends BaseColaFeign<ErrorLogEntity> {
 }

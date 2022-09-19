@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since : 2022-09-07 17:38
  */
 @RestController
-@RequestMapping("/system")
+@RequestMapping("/user")
 public class UserController extends AbstractColaController<UserEntity, UserEntityWrapper, UserService, UserWrapper> {
 
     public UserController(UserService service, UserWrapper wrapperService) {

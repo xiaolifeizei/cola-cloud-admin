@@ -35,6 +35,11 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>${mysql.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.matrix.cola.cloud</groupId>
+            <artifactId>cola-auth</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

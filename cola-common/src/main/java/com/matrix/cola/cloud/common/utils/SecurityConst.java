@@ -26,7 +26,11 @@ public class SecurityConst {
     /**
      * 验签密钥
      */
-    public static final String JWT_KEY = "MatrixCola";
+    public static final String JWT_KEY = "MatrixColaCloud";
+
+    public static final String TOKEN_KEY = "token";
+
+    public static final String TOKEN_PREFIX = "Cola ";
 
 
 }

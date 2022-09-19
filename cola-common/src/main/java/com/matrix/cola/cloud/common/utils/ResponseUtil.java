@@ -1,5 +1,11 @@
 package com.matrix.cola.cloud.common.utils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.matrix.cola.cloud.api.common.Result;
+import org.springframework.http.MediaType;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -19,5 +25,17 @@ public class ResponseUtil {
         map.put("msg", msg);
         map.put("data", new LinkedHashMap<>());
         return map;
+    }
+
+    public static void out (HttpServletResponse response, Result result) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        response.setStatus(result.getCode());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE );
+        try {
+            objectMapper.writeValue(response.getWriter(),result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
