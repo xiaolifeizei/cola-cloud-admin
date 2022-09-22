@@ -30,7 +30,7 @@ public class SecurityConst {
 
     public static final String TOKEN_KEY = "token";
 
-    public static final String TOKEN_PREFIX = "Cola ";
+    public static final String TOKEN_PREFIX = "bearer ";
 
 
 }

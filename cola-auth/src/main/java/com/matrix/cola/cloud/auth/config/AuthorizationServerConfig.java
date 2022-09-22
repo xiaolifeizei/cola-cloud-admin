@@ -1,24 +1,20 @@
 package com.matrix.cola.cloud.auth.config;
 
 import com.matrix.cola.cloud.auth.service.ClientDetailsServiceImpl;
-import com.matrix.cola.cloud.auth.service.SecurityUserDetailsServiceImpl;
 import com.matrix.cola.cloud.auth.support.JwtTokenEnhancer;
-import com.matrix.cola.cloud.auth.utils.AuthConstant;
 import lombok.AllArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.token.TokenEnhancer;
-import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
-import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
+import org.springframework.security.oauth2.provider.token.*;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
-import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,56 +24,54 @@ import java.util.List;
  * @author : cui_feng
  * @since : 2022-09-14 10:45
  */
-@Order
 @Configuration
 @AllArgsConstructor
 @EnableAuthorizationServer
+@ConditionalOnProperty(prefix = "spring.application",name="name",havingValue = "cola-auth")
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    private final DataSource dataSource;
 
-    private TokenStore tokenStore;
+    private final ClientDetailsServiceImpl clientDetailsService;
 
-    private JwtAccessTokenConverter jwtAccessTokenConverter;
+    private final TokenStore tokenStore;
 
-    private JwtTokenEnhancer tokenEnhancer;
+    private final JwtAccessTokenConverter jwtAccessTokenConverter;
 
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    private SecurityUserDetailsServiceImpl userDetailsService;
+    private final AuthorizationCodeServices authorizationCodeServices;
+
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
         security
                 .allowFormAuthenticationForClients()
                 .tokenKeyAccess("permitAll()")
-                .checkTokenAccess("isAuthenticated()");
+                .checkTokenAccess("permitAll()");
     }
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        ClientDetailsServiceImpl clientService = new ClientDetailsServiceImpl(dataSource);
-        clientService.setSelectClientDetailsSql(AuthConstant.DEFAULT_SELECT_STATEMENT);
-        clientService.setFindClientDetailsSql(AuthConstant.DEFAULT_FIND_STATEMENT);
-        clients.withClientDetails(clientService);
+        clients.withClientDetails(clientDetailsService);
     }
+
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.tokenStore(tokenStore)
+
+        endpoints
+                .tokenStore(tokenStore)
                 .authenticationManager(authenticationManager)
-                .userDetailsService(userDetailsService);
+                .authorizationCodeServices(authorizationCodeServices);
 
-        // 增加过滤器链
-        if (jwtAccessTokenConverter != null && tokenEnhancer != null) {
-            TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-            List<TokenEnhancer> enhancerList = new ArrayList<>();
-            enhancerList.add(tokenEnhancer);
-            enhancerList.add(jwtAccessTokenConverter);
-            tokenEnhancerChain.setTokenEnhancers(enhancerList);
+        TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
+        List<TokenEnhancer> enhancerList = new ArrayList<>();
+        enhancerList.add(new JwtTokenEnhancer());
+        enhancerList.add(jwtAccessTokenConverter);
+        tokenEnhancerChain.setTokenEnhancers(enhancerList);
 
-            endpoints.tokenEnhancer(tokenEnhancerChain)
-                    .accessTokenConverter(jwtAccessTokenConverter);
-        }
+        endpoints.tokenEnhancer(tokenEnhancerChain);
     }
+
+
 }

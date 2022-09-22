@@ -1,6 +1,5 @@
 package com.matrix.cola.cloud.gateway.handler;
 
-import com.matrix.cola.cloud.common.utils.ResponseUtil;
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler;
@@ -11,6 +10,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.reactive.function.server.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -41,7 +42,7 @@ public class ErrorExceptionHandler extends DefaultErrorWebExceptionHandler {
 			code = ((ResponseStatusException) error).getStatus().value();
 		}
 
-		return ResponseUtil.out(code, this.buildMessage(request, error));
+		return responseOut(code, this.buildMessage(request, error));
 	}
 
 	/**
@@ -82,6 +83,15 @@ public class ErrorExceptionHandler extends DefaultErrorWebExceptionHandler {
 			message.append(ex.getMessage());
 		}
 		return message.toString();
+	}
+
+	private Map<String, Object> responseOut(int status, String msg) {
+		Map<String, Object> map = new HashMap<>(16);
+		map.put("success", status == 200);
+		map.put("code", status);
+		map.put("msg", msg);
+		map.put("data", new LinkedHashMap<>());
+		return map;
 	}
 
 }

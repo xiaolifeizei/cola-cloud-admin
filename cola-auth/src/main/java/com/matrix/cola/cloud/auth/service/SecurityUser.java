@@ -1,7 +1,9 @@
 package com.matrix.cola.cloud.auth.service;
 
 import cn.hutool.core.util.StrUtil;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.matrix.cola.cloud.api.entity.system.user.UserEntity;
+import com.matrix.cola.cloud.auth.support.AuthorityJsonDeserializer;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

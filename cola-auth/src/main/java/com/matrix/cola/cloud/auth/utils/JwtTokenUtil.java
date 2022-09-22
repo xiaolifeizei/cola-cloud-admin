@@ -9,8 +9,6 @@ import cn.hutool.jwt.JWTUtil;
 import com.matrix.cola.cloud.api.entity.system.user.UserEntity;
 import com.matrix.cola.cloud.common.utils.SecurityConst;
 import com.matrix.cola.cloud.common.utils.WebUtil;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.oauth2.common.exceptions.UnapprovedClientAuthenticationException;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -75,7 +73,8 @@ public class JwtTokenUtil {
     private static String[] getTokenFromHeader() {
         String header = WebUtil.getRequest().getHeader(SecurityConst.TOKEN_KEY);
         if (header == null || !header.startsWith(SecurityConst.TOKEN_PREFIX)) {
-            throw new UnapprovedClientAuthenticationException("请求头中无client信息");
+            // throw new UnapprovedClientAuthenticationException("请求头中无client信息");
+            return null;
         }
 
         byte[] base64Token = header.substring(5).getBytes(StandardCharsets.UTF_8);
@@ -84,13 +83,15 @@ public class JwtTokenUtil {
         try {
             decoded = Base64.getDecoder().decode(base64Token);
         } catch (IllegalArgumentException e) {
-            throw new BadCredentialsException("Failed to decode basic authentication token");
+            // throw new BadCredentialsException("Failed to decode basic authentication token");
+            return null;
         }
 
         String token = new String(decoded, StandardCharsets.UTF_8);
         int index = token.indexOf("#");
         if (index == -1) {
-            throw new BadCredentialsException("Invalid basic authentication token");
+            // throw new BadCredentialsException("Invalid basic authentication token");
+            return null;
         } else {
             return new String[]{token.substring(0, index), token.substring(index + 1)};
         }
@@ -101,10 +102,12 @@ public class JwtTokenUtil {
      * @return ClientId
      */
     public static String getClientId () {
-        return getTokenFromHeader()[0];
+        String [] header = getTokenFromHeader();
+        return ObjectUtil.isNull(header) ? "" : header[0];
     }
 
     public static String getToken() {
-        return getTokenFromHeader()[1];
+        String [] header = getTokenFromHeader();
+        return ObjectUtil.isNull(header) ? "" : header[1];
     }
 }

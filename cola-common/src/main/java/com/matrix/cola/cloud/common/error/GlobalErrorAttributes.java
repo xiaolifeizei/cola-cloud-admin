@@ -29,13 +29,15 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
 		Result result;
 		if (error == null) {
 			if (status != null && status == 404) {
-				result = Result.err(String.format("请求的资源不存在：URL:%s 状态码:%d", requestUri, status));
+				result = Result.err(status,String.format("请求的资源不存在：URL:%s 状态码:%d", requestUri, status));
+			} else if (status != null && status == 401) {
+				result = Result.err(status,String.format("您无权访问该资源：URL:%s 状态码:%d", requestUri, status));
 			} else {
 				log.error("URL:{} error status:{}", requestUri, status);
-				result = Result.err("系统未知异常[HttpStatus]:" + status);
+				result = Result.err(status,"系统未知异常[HttpStatus]:" + status);
 			}
 		} else {
-			result = Result.err(error.getMessage());
+			result = Result.err(status == null ? 500: status,error.getMessage());
 		}
 		return BeanUtil.beanToMap(result);
 	}

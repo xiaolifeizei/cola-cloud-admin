@@ -1,8 +1,6 @@
 package com.matrix.cola.cloud.auth.config;
 
-import com.matrix.cola.cloud.auth.support.JwtTokenEnhancer;
 import com.matrix.cola.cloud.common.utils.SecurityConst;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -36,12 +34,4 @@ public class TokenStoreConfiguration {
         return accessTokenConverter;
     }
 
-    /**
-     * 用于扩展jwt
-     */
-    @Bean
-    @ConditionalOnMissingBean(name = "jwtTokenEnhancer")
-    public JwtTokenEnhancer jwtTokenEnhancer() {
-        return new JwtTokenEnhancer();
-    }
 }

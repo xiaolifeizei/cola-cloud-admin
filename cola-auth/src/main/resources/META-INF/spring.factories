@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration = \
+com.matrix.cola.cloud.auth.config.ResourceServerConfiguration,\
+com.matrix.cola.cloud.auth.config.TokenStoreConfiguration

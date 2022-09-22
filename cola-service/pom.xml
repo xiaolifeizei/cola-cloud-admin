@@ -40,6 +40,7 @@
             <groupId>com.matrix.cola.cloud</groupId>
             <artifactId>cola-auth</artifactId>
         </dependency>
+
     </dependencies>
 
 </project>

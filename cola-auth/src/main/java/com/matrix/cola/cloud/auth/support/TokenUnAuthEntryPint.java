@@ -1,6 +1,6 @@
 package com.matrix.cola.cloud.auth.support;
 
-import cn.hutool.http.HttpStatus;
+import com.matrix.cola.cloud.api.common.Result;
 import com.matrix.cola.cloud.common.utils.ResponseUtil;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -19,6 +19,6 @@ import java.io.IOException;
 public class TokenUnAuthEntryPint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        ResponseUtil.out(HttpStatus.HTTP_FORBIDDEN,"您未认证，无法访问本资源");
+        ResponseUtil.out(response, Result.err(response.getStatus(),"您未认证，无法访问本资源," + request.getRequestURI()));
     }
 }

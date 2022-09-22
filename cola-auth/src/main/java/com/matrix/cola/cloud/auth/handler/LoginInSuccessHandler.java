@@ -1,5 +1,6 @@
 package com.matrix.cola.cloud.auth.handler;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.matrix.cola.cloud.auth.utils.JwtTokenUtil;
 import lombok.AllArgsConstructor;
@@ -43,6 +44,14 @@ public class LoginInSuccessHandler extends SavedRequestAwareAuthenticationSucces
 
         String clientId = JwtTokenUtil.getClientId();
         String clientSecret = JwtTokenUtil.getToken();
+
+        if (StrUtil.isEmpty(clientId)) {
+            throw new UnapprovedClientAuthenticationException("clientId 不能为空");
+        }
+
+        if (StrUtil.isEmpty(clientSecret)) {
+            throw new UnapprovedClientAuthenticationException("clientSecret 不能为空");
+        }
 
         ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
         if (clientDetails == null) {

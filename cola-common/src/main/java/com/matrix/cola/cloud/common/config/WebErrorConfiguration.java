@@ -6,9 +6,7 @@ import com.matrix.cola.cloud.common.error.GlobalErrorAttributes;
 import com.matrix.cola.cloud.common.error.GlobalErrorController;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.boot.autoconfigure.condition.SearchStrategy;
+import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
@@ -28,6 +26,7 @@ import org.springframework.context.annotation.Configuration;
 @AllArgsConstructor
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @AutoConfigureBefore(ErrorMvcAutoConfiguration.class)
+//@ConditionalOnMissingClass("com.matrix.cola.cloud.auth.config.AuthorizationServerConfig")
 public class WebErrorConfiguration {
 
 	private final ServerProperties serverProperties;

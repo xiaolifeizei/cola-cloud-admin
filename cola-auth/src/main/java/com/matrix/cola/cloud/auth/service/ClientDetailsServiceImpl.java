@@ -1,5 +1,6 @@
 package com.matrix.cola.cloud.auth.service;
 
+import com.matrix.cola.cloud.auth.utils.AuthConstant;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,8 @@ public class ClientDetailsServiceImpl extends JdbcClientDetailsService {
 
     public ClientDetailsServiceImpl(DataSource dataSource) {
         super(dataSource);
+        setSelectClientDetailsSql(AuthConstant.DEFAULT_SELECT_STATEMENT);
+        setFindClientDetailsSql(AuthConstant.DEFAULT_FIND_STATEMENT);
     }
 
     /**

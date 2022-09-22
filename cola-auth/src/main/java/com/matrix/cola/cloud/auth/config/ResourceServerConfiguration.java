@@ -1,19 +1,19 @@
 package com.matrix.cola.cloud.auth.config;
 
-import com.matrix.cola.cloud.auth.filter.TokenAuthFilter;
+import com.matrix.cola.cloud.auth.filter.TokenLoginFilter;
 import com.matrix.cola.cloud.auth.support.TokenAccessDeniedHandler;
-import com.matrix.cola.cloud.auth.support.TokenLogoutHandler;
 import com.matrix.cola.cloud.auth.support.TokenUnAuthEntryPint;
+import com.matrix.cola.cloud.common.utils.EnvUtil;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -31,45 +31,45 @@ import java.util.Collections;
 @Configuration
 @AllArgsConstructor
 @EnableResourceServer
+@ConditionalOnMissingBean(AuthorizationServerConfig.class)
 public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
-    /**
-     * 自定义登录成功处理器
-     */
-    private AuthenticationSuccessHandler loginInSuccessHandler;
+    private final TokenStore tokenStore;
 
-    private TokenAuthFilter tokenAuthFilter;
-
-    private AuthenticationManager authenticationManager;
+    @Override
+    public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
+        resources
+                .accessDeniedHandler(new TokenAccessDeniedHandler())
+                .resourceId(EnvUtil.getEnvValue("spring.application.name"))
+                .tokenStore(tokenStore)
+                .accessDeniedHandler(new TokenAccessDeniedHandler())
+                .stateless(true);
+    }
 
     @Override
     @SneakyThrows
     public void configure(HttpSecurity http) {
-        http.headers().frameOptions().disable();
         http
-                .formLogin()
-                    .successHandler(loginInSuccessHandler)
-                .and()
-                    .exceptionHandling()
-                    .authenticationEntryPoint(new TokenUnAuthEntryPint())// 未认证
-                    .accessDeniedHandler(new TokenAccessDeniedHandler()) // 权限不足
-                .and()
-                    .cors()
+            .httpBasic()
+            .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(new TokenUnAuthEntryPint())// 未认证
+            .and()
+                .cors()
                     .configurationSource(corsConfigurationSource())
-                .and()
-                    .csrf().disable()//关闭csrf
-                    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)//关闭Session
-                .and()
-                    .authorizeRequests()
-                        .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .antMatchers("/oauth/**",
-                            "/actuator/**","/token/**", "/mobile/**", "/v2/api-docs", "/v2/api-docs-ext").permitAll()// 允许所有人访问
-                        .anyRequest().authenticated() // 其他所有访问需要鉴权认证
-                .and()
-                    .logout().logoutUrl("/auth/logout")
-                    .addLogoutHandler(new TokenLogoutHandler())
-                .and()
-                    .addFilterBefore(tokenAuthFilter, UsernamePasswordAuthenticationFilter.class);
+            .and()
+                .csrf()
+                    .disable()// 关闭csrf
+                .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)//关闭Session
+            .and()
+                .authorizeRequests()
+                    .antMatchers("/login/**")
+                        .permitAll()
+                    .anyRequest()
+                        .authenticated()
+            .and()
+                .addFilterAt(new TokenLoginFilter(), UsernamePasswordAuthenticationFilter.class); // 其他所有访问需要鉴权认证
     }
 
     /**

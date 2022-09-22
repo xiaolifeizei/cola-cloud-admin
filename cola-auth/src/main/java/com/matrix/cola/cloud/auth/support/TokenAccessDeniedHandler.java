@@ -1,6 +1,6 @@
 package com.matrix.cola.cloud.auth.support;
 
-import cn.hutool.http.HttpStatus;
+import com.matrix.cola.cloud.api.common.Result;
 import com.matrix.cola.cloud.common.utils.ResponseUtil;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -19,6 +19,6 @@ import java.io.IOException;
 public class TokenAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        ResponseUtil.out(HttpStatus.HTTP_UNAUTHORIZED,"权限不足，您没有权限访问本资源");
+        ResponseUtil.out(response, Result.err(response.getStatus(),"权限不足，您没有权限访问本资源,"+ request.getRequestURI()));
     }
 }

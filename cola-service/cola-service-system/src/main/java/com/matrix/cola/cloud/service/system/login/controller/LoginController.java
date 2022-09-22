@@ -3,9 +3,9 @@ package com.matrix.cola.cloud.service.system.login.controller;
 import cn.hutool.core.util.ObjectUtil;
 import com.matrix.cola.cloud.api.common.Result;
 import com.matrix.cola.cloud.api.entity.system.user.UserEntity;
-import com.matrix.cola.cloud.auth.utils.JwtTokenUtil;
 import com.matrix.cola.cloud.common.utils.WebUtil;
 import com.matrix.cola.cloud.service.system.login.service.LoginService;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,10 +19,11 @@ import java.util.List;
  * @since : 2022-09-16 11:08
  */
 @RestController
-@RequestMapping("/system/login")
+@RequestMapping("/login")
+@AllArgsConstructor
 public class LoginController {
 
-    LoginService loginService;
+    final LoginService loginService;
 
     /**
      * 登陆时获取用户信息
@@ -64,15 +65,15 @@ public class LoginController {
         return loginService.getButtonsByUserId(userPO.getId());
     }
 
-    @PostMapping("/refreshToken")
-    public Result refreshToken() {
-        try {
-            return Result.ok().put("token", JwtTokenUtil.createToken(WebUtil.getUser()));
-        } catch (Exception ignore) {
-        }
-        // 刷新token失败反回空
-        return Result.ok();
-    }
+//    @PostMapping("/refreshToken")
+//    public Result refreshToken() {
+//        try {
+//            return Result.ok().put("token", JwtTokenUtil.createToken(WebUtil.getUser()));
+//        } catch (Exception ignore) {
+//        }
+//        // 刷新token失败反回空
+//        return Result.ok();
+//    }
 
     /**
      * 通过用户名获取登录用户
