@@ -1,10 +1,14 @@
 package com.matrix.cola.cloud.auth.config;
 
 
+import com.matrix.cola.cloud.auth.filter.TokenAuthFilter;
+import com.matrix.cola.cloud.auth.filter.TokenLoginFilter;
 import com.matrix.cola.cloud.auth.service.SecurityUserDetailsServiceImpl;
 import com.matrix.cola.cloud.auth.support.ColaPasswordEncoderFactories;
 import com.matrix.cola.cloud.auth.support.RedisAuthorizationCodeServices;
-import com.matrix.cola.cloud.common.utils.RedisUtil;
+import com.matrix.cola.cloud.auth.support.TokenAccessDeniedHandler;
+import com.matrix.cola.cloud.auth.support.TokenUnAuthEntryPint;
+import com.matrix.cola.cloud.common.cache.CacheProxy;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -14,8 +18,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Web安全配置
@@ -23,16 +29,16 @@ import org.springframework.security.oauth2.provider.code.AuthorizationCodeServic
  * @author : cui_feng
  * @since : 2022-04-20 14:18
  */
-
 @Configuration
 @AllArgsConstructor
 @ConditionalOnProperty(prefix = "spring.application",name="name",havingValue = "cola-auth")
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-
     private final SecurityUserDetailsServiceImpl userDetailsService;
 
-    private final RedisUtil redisUtil;
+    private final CacheProxy cacheProxy;
+
+    private final TokenAuthFilter tokenAuthFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -44,7 +50,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Bean
     public AuthorizationCodeServices authorizationCodeServices() {
-        return new RedisAuthorizationCodeServices(redisUtil);
+        return new RedisAuthorizationCodeServices(cacheProxy);
     }
 
     @Bean
@@ -57,17 +63,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-                .antMatchers("/oauth/**").authenticated()
-                .anyRequest().permitAll()
+                .anyRequest().authenticated()
             .and()
                 .formLogin()
             .and()
+                .exceptionHandling()
+                    .accessDeniedHandler(new TokenAccessDeniedHandler())
+                    .authenticationEntryPoint(new TokenUnAuthEntryPint())
+            .and()
+                .addFilterAt(tokenLoginFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(tokenAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .csrf()
-                    .disable();
+                    .disable()
+                    .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
+
+    @Bean
+    TokenLoginFilter tokenLoginFilter() {
+        return new TokenLoginFilter(authenticationManagerBean());
     }
 }

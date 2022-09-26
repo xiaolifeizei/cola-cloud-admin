@@ -8,6 +8,7 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -21,14 +22,18 @@ public class JwtTokenEnhancer implements TokenEnhancer {
     @Override
     public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
 
-        SecurityUser principal = (SecurityUser) authentication.getUserAuthentication().getPrincipal();
+        SecurityUser user = (SecurityUser) authentication.getUserAuthentication().getPrincipal();
 
         Map<String, Object> info = new HashMap<>(16);
-        info.put("client_id", authentication.getOAuth2Request().getClientId());
-        info.put("id",StrUtil.toString(principal.getCurrentUser().getId()));
-        info.put("name",StrUtil.emptyToDefault(principal.getCurrentUser().getName(),""));
-        info.put("loginName",StrUtil.emptyToDefault(principal.getCurrentUser().getLoginName(),""));
-        info.put("groupId",principal.getCurrentUser().getGroupId());
+        info.put("clientId", authentication.getOAuth2Request().getClientId());
+        info.put("id",StrUtil.toString(user.getCurrentUser().getId()));
+        info.put("name",StrUtil.emptyToDefault(user.getCurrentUser().getName(),""));
+        info.put("loginName",StrUtil.emptyToDefault(user.getCurrentUser().getLoginName(),""));
+        info.put("groupId",user.getCurrentUser().getGroupId());
+        info.put("success",true);
+        info.put("msg", "操作成功！");
+        info.put("code",200);
+        info.put("data", new LinkedHashMap<>());
 
         ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(info);
 

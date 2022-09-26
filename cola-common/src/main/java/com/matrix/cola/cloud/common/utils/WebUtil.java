@@ -110,6 +110,10 @@ public class WebUtil {
         return WebUtil.getRequest().getHeader("token");
     }
 
+    public static String getApproveToken() {
+        return WebUtil.getRequest().getHeader("ApproveToken");
+    }
+
     /**
      * 从token中解析当前用户
      * @param request request对象
@@ -158,7 +162,7 @@ public class WebUtil {
          * 验证ToKen是否有效
          */
         try {
-            if (!JWTUtil.verify(token,SecurityConst.JWT_KEY.getBytes())) {
+            if (!JWTUtil.verify(token,SecurityConst.APPROVE_JWT_KEY.getBytes())) {
                 return false;
             }
         } catch (Exception ignore) {

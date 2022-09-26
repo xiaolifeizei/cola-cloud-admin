@@ -47,7 +47,7 @@ public class RedisConfiguration {
     @Bean
     @ConditionalOnMissingBean(RedisSerializer.class)
     public RedisSerializer<Object> redisSerializer() {
-        return new JdkSerializationRedisSerializer();
+        return new GenericJackson2JsonRedisSerializer();
     }
 
     @Bean(name = "redisTemplate")
@@ -55,7 +55,7 @@ public class RedisConfiguration {
     @ConditionalOnMissingBean(RedisTemplate.class)
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory, RedisSerializer<Object> redisSerializer) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        // RedisSerializer<Object> jsonSerializer = new GenericJackson2JsonRedisSerializer();
+        RedisSerializer<Object> jsonSerializer = new GenericJackson2JsonRedisSerializer();
         // key 序列化
         // redisTemplate.setKeySerializer(jsonSerializer);
         // redisTemplate.setHashKeySerializer(jsonSerializer);
@@ -71,13 +71,13 @@ public class RedisConfiguration {
 
     @Bean(name = "redisUtil")
     @ConditionalOnBean(RedisTemplate.class)
-    public RedisUtil redisUtils(RedisTemplate<String, Object> redisTemplate) {
+    public RedisUtil redisUtil(RedisTemplate<String, Object> redisTemplate) {
         return new RedisUtil(redisTemplate);
     }
 
     @Bean
     @ConditionalOnBean(RedisUtil.class)
-    public CacheProxy cacheProxy() {
-        return new CacheProxy();
+    public CacheProxy cacheProxy(RedisUtil redisUtil) {
+        return new CacheProxy(redisUtil);
     }
 }

@@ -26,7 +26,6 @@ import org.springframework.context.annotation.Configuration;
 @AllArgsConstructor
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @AutoConfigureBefore(ErrorMvcAutoConfiguration.class)
-//@ConditionalOnMissingClass("com.matrix.cola.cloud.auth.config.AuthorizationServerConfig")
 public class WebErrorConfiguration {
 
 	private final ServerProperties serverProperties;

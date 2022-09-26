@@ -2,16 +2,21 @@ package com.matrix.cola.cloud.auth.filter;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.jwt.JWT;
+import cn.hutool.jwt.JWTUtil;
 import com.matrix.cola.cloud.api.common.ColaConstant;
+import com.matrix.cola.cloud.api.common.service.ColaCacheName;
 import com.matrix.cola.cloud.api.entity.system.user.UserEntity;
 import com.matrix.cola.cloud.api.feign.system.login.LoginServiceFeign;
-import com.matrix.cola.cloud.auth.utils.JwtTokenUtil;
+import com.matrix.cola.cloud.auth.service.SecurityUser;
+import com.matrix.cola.cloud.common.cache.CacheProxy;
 import com.matrix.cola.cloud.common.utils.WebUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -28,10 +33,13 @@ import java.util.List;
  * @author : cui_feng
  * @since : 2022-04-21 16:36
  */
+@Component
 @AllArgsConstructor
 public class TokenAuthFilter extends OncePerRequestFilter {
 
     LoginServiceFeign loginService;
+
+    CacheProxy cacheProxy;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -46,15 +54,28 @@ public class TokenAuthFilter extends OncePerRequestFilter {
 
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
 
-        String token = JwtTokenUtil.getToken();
+        String token = WebUtil.getApproveToken();
+
+        if (StrUtil.isEmpty(token)) {
+            token = WebUtil.getToken();
+        }
 
         // token过期
         if (StrUtil.isEmpty(token) || WebUtil.isTokenExp(token)) {
             return null;
         }
 
+        UserEntity userPO = null;
+
+        // 解析token
+        JWT jwt = JWTUtil.parseToken(token);
+        Object approveId = jwt.getPayload("approveId");
+        if (ObjectUtil.isNotEmpty(approveId)) {
+            userPO = cacheProxy.getEvictObject(ColaCacheName.OAUTH2_APPROVE_ID, approveId.toString());
+        }
+
         // 获取当前登陆用户
-        UserEntity userPO = WebUtil.getUser();
+        userPO = ObjectUtil.isEmpty(userPO) ? WebUtil.getUser() : userPO;
         if (ObjectUtil.isNull(userPO)) {
             return null;
         }
@@ -73,6 +94,10 @@ public class TokenAuthFilter extends OncePerRequestFilter {
             permissionList.add(simpleGrantedAuthority);
         }
 
-        return new UsernamePasswordAuthenticationToken(userPO.getLoginName(),token,permissionList);
+        SecurityUser securityUser = new SecurityUser();
+        securityUser.setCurrentUser(userPO);
+        securityUser.setPermissionList(roleCodeList);
+
+        return new UsernamePasswordAuthenticationToken(securityUser,token,permissionList);
     }
 }

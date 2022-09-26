@@ -28,6 +28,11 @@ public class SecurityConst {
      */
     public static final String JWT_KEY = "MatrixColaCloud";
 
+    /**
+     * 用户授权jwt令牌
+     */
+    public static final String APPROVE_JWT_KEY = "MatrixColaCloudOAuth2Approve";
+
     public static final String TOKEN_KEY = "token";
 
     public static final String TOKEN_PREFIX = "bearer ";

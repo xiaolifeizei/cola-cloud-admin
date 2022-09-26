@@ -98,6 +98,11 @@ public enum ColaCacheName implements Serializable {
     OAUTH2_AUTHORIZATION_CODE("oauth2_authorization_code"),
 
     /**
+     * 用户授权ID
+     */
+    OAUTH2_APPROVE_ID("oauth2_approve_id"),
+
+    /**
      * 过磅Service
      */
     WEIGH_PROCESSOR("weigh_processor");

@@ -3,13 +3,17 @@ package com.matrix.cola.cloud.common.error;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.matrix.cola.cloud.api.common.Result;
+import com.matrix.cola.cloud.common.utils.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.lang.Nullable;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
@@ -47,4 +51,20 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
 		return (T) webRequest.getAttribute(name, RequestAttributes.SCOPE_REQUEST);
 	}
 
+	/**
+	 * ModelAndView 异常处理
+	 * @param request current HTTP request
+	 * @param response current HTTP response
+	 * @param handler the executed handler, or {@code null} if none chosen at the
+	 * time of the exception (for example, if multipart resolution failed)
+	 * @param ex the exception that got thrown during handler execution
+	 * @return null
+	 */
+	public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler,Exception ex) {
+		ResponseUtil.out(response, Result.err(ex.getMessage()));
+		// 必须要设置一个空的 ModelAndView ，不然会输出两次错误
+		ModelAndView mv = new ModelAndView();
+		mv.getModel().put("","");
+		return mv;
+	}
 }

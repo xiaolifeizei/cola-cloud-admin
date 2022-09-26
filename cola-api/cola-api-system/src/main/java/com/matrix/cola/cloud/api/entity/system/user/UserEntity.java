@@ -48,4 +48,5 @@ public class UserEntity extends BaseColaEntity {
      * 备注
      */
     private String remark;
+
 }

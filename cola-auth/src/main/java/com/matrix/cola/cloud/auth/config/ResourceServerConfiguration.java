@@ -1,6 +1,5 @@
 package com.matrix.cola.cloud.auth.config;
 
-import com.matrix.cola.cloud.auth.filter.TokenLoginFilter;
 import com.matrix.cola.cloud.auth.support.TokenAccessDeniedHandler;
 import com.matrix.cola.cloud.auth.support.TokenUnAuthEntryPint;
 import com.matrix.cola.cloud.common.utils.EnvUtil;
@@ -14,7 +13,6 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -67,9 +65,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                     .antMatchers("/login/**")
                         .permitAll()
                     .anyRequest()
-                        .authenticated()
-            .and()
-                .addFilterAt(new TokenLoginFilter(), UsernamePasswordAuthenticationFilter.class); // 其他所有访问需要鉴权认证
+                        .authenticated();// 其他所有访问需要鉴权认证
     }
 
     /**

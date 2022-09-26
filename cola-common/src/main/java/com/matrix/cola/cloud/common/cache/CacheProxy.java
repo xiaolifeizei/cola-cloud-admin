@@ -6,6 +6,8 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.matrix.cola.cloud.api.common.service.CacheService;
 import com.matrix.cola.cloud.api.common.service.ColaCacheName;
 import com.matrix.cola.cloud.common.utils.RedisUtil;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
@@ -17,7 +19,11 @@ import java.util.concurrent.Callable;
  * @author : cui_feng
  * @since : 2022-04-13 08:44
  */
+@AllArgsConstructor
 public class CacheProxy implements CacheService {
+
+    @Getter
+    private final RedisUtil redisUtil;
 
     /**
      * 创缓存管理器
@@ -58,7 +64,6 @@ public class CacheProxy implements CacheService {
         Cache.ValueWrapper valueWrapper = getCache(cacheName).get(key);
         return valueWrapper == null ? null : (T) valueWrapper.get();
     }
-
 
     @Override
     public <T> T getObjectFromLoader(ColaCacheName cacheName, String key, Callable<T> valueLoader) {
@@ -122,5 +127,10 @@ public class CacheProxy implements CacheService {
         if (!StrUtil.isEmpty(cacheName.cacheName())) {
             getCache(cacheName).clear();
         }
+    }
+
+    @Override
+    public boolean put(ColaCacheName cacheName, String key, Object value, long time) {
+        return redisUtil.set(cacheName.cacheName() + "::" + key, value, time);
     }
 }
