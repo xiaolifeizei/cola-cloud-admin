@@ -6,7 +6,7 @@ import com.matrix.cola.cloud.auth.service.ClientDetailsServiceImpl;
 import com.matrix.cola.cloud.auth.support.JwtTokenEnhancer;
 import com.matrix.cola.cloud.common.cache.CacheProxy;
 import lombok.AllArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -32,7 +32,7 @@ import java.util.List;
 @Configuration
 @AllArgsConstructor
 @EnableAuthorizationServer
-@ConditionalOnProperty(prefix = "spring.application",name="name",havingValue = "cola-auth")
+@ConditionalOnBean(WebSecurityConfig.class)
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
 

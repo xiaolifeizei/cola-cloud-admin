@@ -12,11 +12,11 @@ import com.matrix.cola.cloud.auth.service.SecurityUser;
 import com.matrix.cola.cloud.common.cache.CacheProxy;
 import com.matrix.cola.cloud.common.utils.WebUtil;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -33,7 +33,6 @@ import java.util.List;
  * @author : cui_feng
  * @since : 2022-04-21 16:36
  */
-@Component
 @AllArgsConstructor
 public class TokenAuthFilter extends OncePerRequestFilter {
 
@@ -42,7 +41,7 @@ public class TokenAuthFilter extends OncePerRequestFilter {
     CacheProxy cacheProxy;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+    protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain chain) throws IOException, ServletException {
         // 获取当前登陆用户的权限信息
         UsernamePasswordAuthenticationToken authToken = getAuthentication(request);
         // 放到security上下文中

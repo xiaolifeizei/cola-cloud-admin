@@ -1,5 +1,7 @@
 package com.matrix.cola.cloud.auth.config;
 
+import com.matrix.cola.cloud.auth.filter.DynamicSecurityFilter;
+import com.matrix.cola.cloud.auth.filter.TokenAuthFilter;
 import com.matrix.cola.cloud.auth.support.TokenAccessDeniedHandler;
 import com.matrix.cola.cloud.auth.support.TokenUnAuthEntryPint;
 import com.matrix.cola.cloud.common.utils.EnvUtil;
@@ -13,6 +15,8 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -34,6 +38,10 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
     private final TokenStore tokenStore;
 
+    private final TokenAuthFilter tokenAuthFilter;
+
+    private final DynamicSecurityFilter dynamicSecurityFilter;
+
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
         resources
@@ -51,11 +59,13 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
             .httpBasic()
             .and()
                 .exceptionHandling()
-                .authenticationEntryPoint(new TokenUnAuthEntryPint())// 未认证
+                    .authenticationEntryPoint(new TokenUnAuthEntryPint())
             .and()
                 .cors()
                     .configurationSource(corsConfigurationSource())
             .and()
+                .addFilterBefore(dynamicSecurityFilter, FilterSecurityInterceptor.class)
+                .addFilterBefore(tokenAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .csrf()
                     .disable()// 关闭csrf
                 .sessionManagement()

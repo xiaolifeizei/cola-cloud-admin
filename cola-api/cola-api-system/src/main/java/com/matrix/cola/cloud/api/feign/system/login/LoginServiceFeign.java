@@ -13,7 +13,7 @@ import java.util.List;
  * @author : cui_feng
  * @since : 2022-09-16 11:19
  */
-@FeignClient(value = "cola-system", contextId = "system-login-client", path = "login")
+@FeignClient(value = "cola-system", contextId = "system-login-client", path = "login", fallbackFactory = LoginFeignFallbackFactory.class)
 public interface LoginServiceFeign {
 
     /**

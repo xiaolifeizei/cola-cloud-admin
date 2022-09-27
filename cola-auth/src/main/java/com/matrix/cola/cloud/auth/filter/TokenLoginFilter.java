@@ -61,7 +61,7 @@ public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
         }
 
         UserEntity userPO = new UserEntity();
-        userPO.setLoginName(request.getParameter("loginName"));
+        userPO.setLoginName(request.getParameter("username"));
         userPO.setPassword(request.getParameter("password"));
 
         return getAuthenticationManager().authenticate(new UsernamePasswordAuthenticationToken(userPO.getLoginName(),userPO.getPassword(),new ArrayList<>()));

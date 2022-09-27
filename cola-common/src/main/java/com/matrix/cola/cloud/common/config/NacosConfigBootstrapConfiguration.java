@@ -32,6 +32,7 @@ public class NacosConfigBootstrapConfiguration {
         if (ObjectUtil.isEmpty(sharedConfigs)) {
             sharedConfigs = new ArrayList<>();
         }
+        sharedConfig.setRefresh(true);
         sharedConfigs.add(sharedConfig);
         nacosConfigProperties.setSharedConfigs(sharedConfigs);
     }

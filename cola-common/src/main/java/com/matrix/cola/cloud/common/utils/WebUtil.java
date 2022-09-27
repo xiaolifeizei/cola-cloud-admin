@@ -17,6 +17,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
@@ -107,11 +108,21 @@ public class WebUtil {
     }
 
     public static String getToken() {
-        return WebUtil.getRequest().getHeader("token");
+        String token = Objects.requireNonNull(WebUtil.getRequest()).getHeader("Authorization");
+        if (StrUtil.isEmpty(token)) {
+            return null;
+        }
+
+        // bearer check
+        if (!token.toLowerCase().startsWith("bearer ")) {
+            return null;
+        }
+
+        return token.substring(7);
     }
 
     public static String getApproveToken() {
-        return WebUtil.getRequest().getHeader("ApproveToken");
+        return Objects.requireNonNull(WebUtil.getRequest()).getHeader("ApproveToken");
     }
 
     /**

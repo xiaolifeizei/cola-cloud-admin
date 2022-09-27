@@ -62,7 +62,6 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
 	 */
 	public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler,Exception ex) {
 		ResponseUtil.out(response, Result.err(ex.getMessage()));
-		// 必须要设置一个空的 ModelAndView ，不然会输出两次错误
 		ModelAndView mv = new ModelAndView();
 		mv.getModel().put("","");
 		return mv;

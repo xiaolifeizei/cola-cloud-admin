@@ -36,8 +36,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final SecurityUserDetailsServiceImpl userDetailsService;
 
-    private final CacheProxy cacheProxy;
-
     private final TokenAuthFilter tokenAuthFilter;
 
     @Bean
@@ -49,7 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * 设置授权码模式的授权码如何存取
      */
     @Bean
-    public AuthorizationCodeServices authorizationCodeServices() {
+    public AuthorizationCodeServices authorizationCodeServices(CacheProxy cacheProxy) {
         return new RedisAuthorizationCodeServices(cacheProxy);
     }
 
@@ -76,7 +74,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                     .disable()
                     .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
     @Override
