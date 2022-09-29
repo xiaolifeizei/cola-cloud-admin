@@ -51,7 +51,7 @@ public class OAuth2AuthorizationEndpoint extends AuthorizationEndpoint {
         Set<String> responseTypes = authorizationRequest.getResponseTypes();
 
         if (!responseTypes.contains("token") && !responseTypes.contains("code")) {
-            return Result.err("不支持的响应类型" + responseTypes);
+            return Result.err("不支持的response_type，只能为token或code");
         }
 
         if (authorizationRequest.getClientId() == null) {
@@ -111,7 +111,7 @@ public class OAuth2AuthorizationEndpoint extends AuthorizationEndpoint {
             userEntity.setPassword(null);
             cacheProxy.put(ColaCacheName.OAUTH2_APPROVE_ID, approvedId, userEntity, JwtTokenUtil.EXPIRATION);
 
-            return Result.ok().data("ApprovedToken",approvedToken);
+            return Result.ok().data("ApproveToken",approvedToken);
         }
         catch (RuntimeException e) {
             return Result.err(e.getMessage());

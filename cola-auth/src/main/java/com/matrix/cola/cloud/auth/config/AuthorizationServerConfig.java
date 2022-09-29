@@ -3,17 +3,21 @@ package com.matrix.cola.cloud.auth.config;
 import com.matrix.cola.cloud.auth.endpoint.OAuth2AuthorizationEndpoint;
 import com.matrix.cola.cloud.auth.filter.TokenLoginFilter;
 import com.matrix.cola.cloud.auth.service.ClientDetailsServiceImpl;
+import com.matrix.cola.cloud.auth.service.SecurityUserDetailsServiceImpl;
 import com.matrix.cola.cloud.auth.support.JwtTokenEnhancer;
+import com.matrix.cola.cloud.auth.support.TokenUnAuthEntryPint;
 import com.matrix.cola.cloud.common.cache.CacheProxy;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
@@ -32,7 +36,7 @@ import java.util.List;
 @Configuration
 @AllArgsConstructor
 @EnableAuthorizationServer
-@ConditionalOnBean(WebSecurityConfig.class)
+@ConditionalOnBean(AuthorizationServerWebSecurityConfig.class)
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
 
@@ -48,15 +52,27 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     private final AuthorizationCodeServices authorizationCodeServices;
 
-    private TokenLoginFilter tokenLoginFilter;
+    private final TokenLoginFilter tokenLoginFilter;
+
+    private final TokenUnAuthEntryPint tokenUnAuthEntryPint;
+
+    private final SecurityUserDetailsServiceImpl userDetailsService;
 
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
         security
-                .allowFormAuthenticationForClients()
+                .authenticationEntryPoint(tokenUnAuthEntryPint)
                 .tokenKeyAccess("permitAll()")
-                .checkTokenAccess("permitAll()");
+                .checkTokenAccess("permitAll()")
+                .allowFormAuthenticationForClients()
+                .addObjectPostProcessor(new ObjectPostProcessor<ClientCredentialsTokenEndpointFilter>() {
+                    @Override
+                    public <O extends ClientCredentialsTokenEndpointFilter> O postProcess(O tokenEndpointFilter) {
+                        tokenEndpointFilter.setAuthenticationEntryPoint(tokenUnAuthEntryPint);
+                        return tokenEndpointFilter;
+                    }
+                });
     }
 
     @Override
@@ -69,6 +85,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
 
         endpoints
+                .userDetailsService(userDetailsService)
                 .tokenStore(tokenStore)
                 .authenticationManager(authenticationManager)
                 .authorizationCodeServices(authorizationCodeServices);

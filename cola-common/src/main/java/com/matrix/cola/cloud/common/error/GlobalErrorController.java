@@ -33,7 +33,7 @@ public class GlobalErrorController extends BasicErrorController {
 		response.setStatus(status.value());
 		MappingJackson2JsonView view = new MappingJackson2JsonView();
 		view.setObjectMapper(new ObjectMapper());
-		view.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+		view.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		return new ModelAndView(view, body);
 	}
 

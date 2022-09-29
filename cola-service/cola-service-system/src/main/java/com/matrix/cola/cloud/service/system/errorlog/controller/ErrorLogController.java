@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author : cui_feng
  * @since : 2022-06-10 12:45
  */
-@RequestMapping("/system/errorlog")
+@RequestMapping("/errorLog")
 @RestController
 public class ErrorLogController extends AbstractColaController<ErrorLogEntity, ErrorLogEntityWrapper,ErrorLogService,ErrorLogWrapperService> {
 

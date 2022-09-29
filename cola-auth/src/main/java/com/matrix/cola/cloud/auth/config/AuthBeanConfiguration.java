@@ -1,8 +1,6 @@
 package com.matrix.cola.cloud.auth.config;
 
-import com.matrix.cola.cloud.api.feign.system.login.LoginServiceFeign;
-import com.matrix.cola.cloud.auth.filter.TokenAuthFilter;
-import com.matrix.cola.cloud.common.cache.CacheProxy;
+import com.matrix.cola.cloud.auth.support.TokenUnAuthEntryPint;
 import com.matrix.cola.cloud.common.utils.SecurityConst;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -19,12 +17,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
  */
 @Configuration
 @AllArgsConstructor
-public class TokenStoreConfiguration {
-
-    @Bean
-    public TokenAuthFilter tokenAuthFilter(LoginServiceFeign loginService, CacheProxy cacheProxy) {
-        return new TokenAuthFilter(loginService, cacheProxy);
-    }
+public class AuthBeanConfiguration {
 
     /**
      * 使用jwtTokenStore存储token
@@ -42,5 +35,10 @@ public class TokenStoreConfiguration {
         JwtAccessTokenConverter accessTokenConverter = new JwtAccessTokenConverter();
         accessTokenConverter.setSigningKey(SecurityConst.JWT_KEY);
         return accessTokenConverter;
+    }
+
+    @Bean
+    public TokenUnAuthEntryPint tokenUnAuthEntryPint() {
+        return new TokenUnAuthEntryPint();
     }
 }

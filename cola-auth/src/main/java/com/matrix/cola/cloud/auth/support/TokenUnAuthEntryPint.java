@@ -1,10 +1,12 @@
 package com.matrix.cola.cloud.auth.support;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.matrix.cola.cloud.api.common.Result;
 import com.matrix.cola.cloud.common.utils.ResponseUtil;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +21,13 @@ import java.io.IOException;
 public class TokenUnAuthEntryPint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        ResponseUtil.out(response, Result.err(response.getStatus(),"您未认证，无法访问本资源," + request.getRequestURI()));
+        String msg = "认证失败,错误信息：";
+        Object e = request.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
+        if (ObjectUtil.isNotNull(e) && e instanceof Exception) {
+            msg += ((Exception) e).getMessage();
+        } else {
+            msg += authException.getMessage();
+        }
+        ResponseUtil.out(response, Result.err(response.getStatus(),msg));
     }
 }

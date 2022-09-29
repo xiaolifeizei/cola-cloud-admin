@@ -19,6 +19,6 @@ import java.io.IOException;
 public class TokenAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        ResponseUtil.out(response, Result.err(response.getStatus(),"权限不足，您没有权限访问本资源,"+ request.getRequestURI()));
+        ResponseUtil.out(response, Result.err(response.getStatus(),"权限不足，您没有权限访问本资源"));
     }
 }

@@ -1,7 +1,7 @@
 package com.matrix.cola.cloud.auth.config;
 
 
-import com.matrix.cola.cloud.auth.filter.TokenAuthFilter;
+import com.matrix.cola.cloud.auth.filter.AuthApproveFilter;
 import com.matrix.cola.cloud.auth.filter.TokenLoginFilter;
 import com.matrix.cola.cloud.auth.service.SecurityUserDetailsServiceImpl;
 import com.matrix.cola.cloud.auth.support.ColaPasswordEncoderFactories;
@@ -24,7 +24,7 @@ import org.springframework.security.oauth2.provider.code.AuthorizationCodeServic
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * Web安全配置
+ * 认证服务器Security配置
  *
  * @author : cui_feng
  * @since : 2022-04-20 14:18
@@ -32,11 +32,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @AllArgsConstructor
 @ConditionalOnProperty(prefix = "spring.application",name="name",havingValue = "cola-auth")
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class AuthorizationServerWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final SecurityUserDetailsServiceImpl userDetailsService;
 
-    private final TokenAuthFilter tokenAuthFilter;
+    private final CacheProxy cacheProxy;
+
+    private final TokenUnAuthEntryPint tokenUnAuthEntryPint;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -67,10 +69,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
                 .exceptionHandling()
                     .accessDeniedHandler(new TokenAccessDeniedHandler())
-                    .authenticationEntryPoint(new TokenUnAuthEntryPint())
+                    .authenticationEntryPoint(tokenUnAuthEntryPint)
             .and()
                 .addFilterAt(tokenLoginFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(tokenAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new AuthApproveFilter(cacheProxy), UsernamePasswordAuthenticationFilter.class)
                 .csrf()
                     .disable()
                     .sessionManagement()

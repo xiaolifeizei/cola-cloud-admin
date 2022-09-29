@@ -1,7 +1,6 @@
 package com.matrix.cola.cloud.auth.config;
 
 import com.matrix.cola.cloud.auth.filter.DynamicSecurityFilter;
-import com.matrix.cola.cloud.auth.filter.TokenAuthFilter;
 import com.matrix.cola.cloud.auth.support.TokenAccessDeniedHandler;
 import com.matrix.cola.cloud.auth.support.TokenUnAuthEntryPint;
 import com.matrix.cola.cloud.common.utils.EnvUtil;
@@ -9,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
@@ -16,7 +16,6 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -33,22 +32,21 @@ import java.util.Collections;
 @Configuration
 @AllArgsConstructor
 @EnableResourceServer
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @ConditionalOnMissingBean(AuthorizationServerConfig.class)
 public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
     private final TokenStore tokenStore;
-
-    private final TokenAuthFilter tokenAuthFilter;
 
     private final DynamicSecurityFilter dynamicSecurityFilter;
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
         resources
+                .authenticationEntryPoint(new TokenUnAuthEntryPint())
                 .accessDeniedHandler(new TokenAccessDeniedHandler())
                 .resourceId(EnvUtil.getEnvValue("spring.application.name"))
                 .tokenStore(tokenStore)
-                .accessDeniedHandler(new TokenAccessDeniedHandler())
                 .stateless(true);
     }
 
@@ -58,14 +56,10 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         http
             .httpBasic()
             .and()
-                .exceptionHandling()
-                    .authenticationEntryPoint(new TokenUnAuthEntryPint())
-            .and()
                 .cors()
                     .configurationSource(corsConfigurationSource())
             .and()
                 .addFilterBefore(dynamicSecurityFilter, FilterSecurityInterceptor.class)
-                .addFilterBefore(tokenAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .csrf()
                     .disable()// 关闭csrf
                 .sessionManagement()
