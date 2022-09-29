@@ -1,5 +1,6 @@
 package com.matrix.cola.cloud.gateway.handler;
 
+import com.matrix.cola.cloud.gateway.util.ResponseOut;
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler;
@@ -10,8 +11,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.reactive.function.server.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -42,13 +41,13 @@ public class ErrorExceptionHandler extends DefaultErrorWebExceptionHandler {
 			code = ((ResponseStatusException) error).getStatus().value();
 		}
 
-		return responseOut(code, this.buildMessage(request, error));
+		return ResponseOut.out(code, this.buildMessage(request, error));
 	}
 
 	/**
 	 * 指定响应处理方法为JSON处理的方法
 	 *
-	 * @param errorAttributes
+	 * @param errorAttributes 异常属性
 	 */
 	@Override
 	protected RouterFunction<ServerResponse> getRoutingFunction(ErrorAttributes errorAttributes) {
@@ -58,7 +57,7 @@ public class ErrorExceptionHandler extends DefaultErrorWebExceptionHandler {
 	/**
 	 * 根据code获取对应的HttpStatus
 	 *
-	 * @param errorAttributes
+	 * @param errorAttributes 异常属性
 	 */
 	@Override
 	protected int getHttpStatus(Map<String, Object> errorAttributes) {
@@ -68,9 +67,9 @@ public class ErrorExceptionHandler extends DefaultErrorWebExceptionHandler {
 	/**
 	 * 构建异常信息
 	 *
-	 * @param request
-	 * @param ex
-	 * @return
+	 * @param request 请求
+	 * @param ex 异常
+	 * @return msg
 	 */
 	private String buildMessage(ServerRequest request, Throwable ex) {
 		StringBuilder message = new StringBuilder("Failed to handle request [");
@@ -85,13 +84,6 @@ public class ErrorExceptionHandler extends DefaultErrorWebExceptionHandler {
 		return message.toString();
 	}
 
-	private Map<String, Object> responseOut(int status, String msg) {
-		Map<String, Object> map = new HashMap<>(16);
-		map.put("success", status == 200);
-		map.put("code", status);
-		map.put("msg", msg);
-		map.put("data", new LinkedHashMap<>());
-		return map;
-	}
+
 
 }

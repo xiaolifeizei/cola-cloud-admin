@@ -5,7 +5,7 @@ import com.matrix.cola.cloud.api.common.Result;
 import com.matrix.cola.cloud.api.common.service.ColaCacheName;
 import com.matrix.cola.cloud.api.entity.system.user.UserEntity;
 import com.matrix.cola.cloud.auth.service.SecurityUser;
-import com.matrix.cola.cloud.auth.utils.JwtTokenUtil;
+import com.matrix.cola.cloud.common.utils.JwtTokenUtil;
 import com.matrix.cola.cloud.common.cache.CacheProxy;
 import lombok.Setter;
 import org.springframework.security.core.Authentication;

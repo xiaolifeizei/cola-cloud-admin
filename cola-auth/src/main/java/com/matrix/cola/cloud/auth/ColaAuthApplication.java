@@ -11,7 +11,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @since : 2022-09-16 18:22
  */
 @SpringBootApplication
-@EnableFeignClients("com.matrix.cola.cloud")
 public class ColaAuthApplication {
 
     public static void main(String[] args) {

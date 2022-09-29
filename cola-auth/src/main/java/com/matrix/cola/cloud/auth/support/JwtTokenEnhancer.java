@@ -28,7 +28,7 @@ public class JwtTokenEnhancer implements TokenEnhancer {
         info.put("clientId", authentication.getOAuth2Request().getClientId());
 
         // 客户端模式
-        if (authentication.getOAuth2Request().getGrantType().equals("client_credentials")) {
+        if ("client_credentials".equals(authentication.getOAuth2Request().getGrantType())) {
             user = new SecurityUser();
             UserEntity userEntity = new UserEntity();
             userEntity.setId(0L);

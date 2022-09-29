@@ -46,7 +46,7 @@ public class RestExceptionHandler {
 	@ExceptionHandler(MissingServletRequestParameterException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public Result handleError(MissingServletRequestParameterException e) {
-		log.warn("缺少请求参数", e.getMessage());
+		log.warn("缺少请求参数 {}", e.getMessage());
 		String message = String.format("缺少必要的请求参数: %s", e.getParameterName());
 		return Result.err(message);
 	}
@@ -54,7 +54,7 @@ public class RestExceptionHandler {
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public Result handleError(MethodArgumentTypeMismatchException e) {
-		log.warn("请求参数格式错误", e.getMessage());
+		log.warn("请求参数格式错误 {}", e.getMessage());
 		String message = String.format("请求参数格式错误: %s", e.getName());
 		return Result.err(message);
 	}
@@ -62,14 +62,14 @@ public class RestExceptionHandler {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public Result handleError(MethodArgumentNotValidException e) {
-		log.warn("参数验证失败", e.getMessage());
+		log.warn("参数验证失败 {}", e.getMessage());
 		return handleError(e.getBindingResult());
 	}
 
 	@ExceptionHandler(BindException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public Result handleError(BindException e) {
-		log.warn("参数绑定失败", e.getMessage());
+		log.warn("参数绑定失败 {}", e.getMessage());
 		return handleError(e.getBindingResult());
 	}
 

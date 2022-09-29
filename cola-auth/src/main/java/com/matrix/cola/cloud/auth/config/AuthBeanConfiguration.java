@@ -1,7 +1,9 @@
 package com.matrix.cola.cloud.auth.config;
 
+import com.matrix.cola.cloud.auth.interceptor.Oauth2TokenFeignClientInterceptor;
 import com.matrix.cola.cloud.auth.support.TokenUnAuthEntryPint;
 import com.matrix.cola.cloud.common.utils.SecurityConst;
+import feign.RequestInterceptor;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,5 +42,10 @@ public class AuthBeanConfiguration {
     @Bean
     public TokenUnAuthEntryPint tokenUnAuthEntryPint() {
         return new TokenUnAuthEntryPint();
+    }
+
+    @Bean
+    public RequestInterceptor Oauth2TokenFeignClientInterceptor () {
+        return new Oauth2TokenFeignClientInterceptor();
     }
 }

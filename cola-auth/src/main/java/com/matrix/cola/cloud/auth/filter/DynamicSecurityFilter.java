@@ -1,7 +1,7 @@
 package com.matrix.cola.cloud.auth.filter;
 
 import com.alibaba.nacos.common.utils.HttpMethod;
-import com.matrix.cola.cloud.auth.properties.AuthProperties;
+import com.matrix.cola.cloud.common.properties.AuthProperties;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.util.AntPathMatcher;

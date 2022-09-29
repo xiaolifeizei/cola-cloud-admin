@@ -8,6 +8,8 @@ import com.matrix.cola.cloud.api.common.service.ColaCacheName;
 import com.matrix.cola.cloud.api.entity.system.user.UserEntity;
 import com.matrix.cola.cloud.auth.service.SecurityUser;
 import com.matrix.cola.cloud.common.cache.CacheProxy;
+import com.matrix.cola.cloud.common.utils.JwtTokenUtil;
+import com.matrix.cola.cloud.common.utils.SecurityConst;
 import com.matrix.cola.cloud.common.utils.WebUtil;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -49,13 +51,13 @@ public class AuthApproveFilter extends OncePerRequestFilter {
         String token = WebUtil.getApproveToken();
 
         // token过期
-        if (StrUtil.isEmpty(token) || WebUtil.isTokenExp(token)) {
+        if (StrUtil.isEmpty(token) || JwtTokenUtil.isTokenValid(token)) {
             return null;
         }
 
         // 解析token
         JWT jwt = JWTUtil.parseToken(token);
-        Object approveId = jwt.getPayload("approveId");
+        Object approveId = jwt.getPayload(SecurityConst.OAUTH2_APPROVE_ID_KEY);
         UserEntity userPO = cacheProxy.getEvictObject(ColaCacheName.OAUTH2_APPROVE_ID, approveId.toString());
 
         if (ObjectUtil.isNull(userPO)) {

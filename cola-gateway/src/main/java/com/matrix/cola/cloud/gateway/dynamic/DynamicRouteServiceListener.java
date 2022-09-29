@@ -7,7 +7,6 @@ import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
-import com.matrix.cola.cloud.common.utils.EnvUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.route.RouteDefinition;
@@ -46,7 +45,7 @@ public class DynamicRouteServiceListener {
 	private void dynamicRouteServiceListener() {
 		try {
 
-			String dataId = EnvUtil.getEnvValue("spring.application.name") + ".json";
+			String dataId = appName + ".json";
 			String group = nacosConfigProperties.getGroup();
 			String serverAddr = nacosDiscoveryProperties.getServerAddr();
 			ConfigService configService = NacosFactory.createConfigService(serverAddr);

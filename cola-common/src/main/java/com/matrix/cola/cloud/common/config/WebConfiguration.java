@@ -13,7 +13,9 @@ import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConf
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -26,7 +28,9 @@ import org.springframework.context.annotation.Configuration;
 @AllArgsConstructor
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @AutoConfigureBefore(ErrorMvcAutoConfiguration.class)
-public class WebErrorConfiguration {
+@ComponentScan("com.matrix.cola.cloud.api")
+@EnableFeignClients("com.matrix.cola.cloud.api")
+public class WebConfiguration {
 
 	private final ServerProperties serverProperties;
 

@@ -23,6 +23,11 @@ public class SecurityConst {
     public static final String SCRYPT_ENCODE = "scrypt";
     public static final String SCRYPT_ENCODE_KEY = "scrypt";
 
+    public static final String OAUTH2_APPROVE_TOKEN = "ApproveToken";
+    public static final String OAUTH2_APPROVE_ID_KEY = "approveId";
+    public static final String OAUTH2_CLIENT_ID = "client_id";
+    public static final String OAUTH2_RESPONSE_TYPE = "response_type";
+
     /**
      * 验签密钥
      */

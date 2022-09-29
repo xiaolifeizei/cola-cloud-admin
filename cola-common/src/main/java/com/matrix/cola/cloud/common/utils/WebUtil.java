@@ -1,6 +1,5 @@
 package com.matrix.cola.cloud.common.utils;
 
-import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
@@ -10,12 +9,12 @@ import com.matrix.cola.cloud.api.common.ColaConstant;
 import com.matrix.cola.cloud.api.common.service.ColaCacheName;
 import com.matrix.cola.cloud.api.entity.system.user.UserEntity;
 import com.matrix.cola.cloud.common.cache.CacheProxy;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -108,7 +107,7 @@ public class WebUtil {
     }
 
     public static String getToken() {
-        String token = Objects.requireNonNull(WebUtil.getRequest()).getHeader("Authorization");
+        String token = Objects.requireNonNull(WebUtil.getRequest()).getHeader(HttpHeaders.AUTHORIZATION);
         if (StrUtil.isEmpty(token)) {
             return null;
         }
@@ -122,7 +121,7 @@ public class WebUtil {
     }
 
     public static String getApproveToken() {
-        return Objects.requireNonNull(WebUtil.getRequest()).getHeader("ApproveToken");
+        return Objects.requireNonNull(WebUtil.getRequest()).getHeader(SecurityConst.OAUTH2_APPROVE_TOKEN);
     }
 
     /**
@@ -135,7 +134,7 @@ public class WebUtil {
         String token = getToken();
 
         // token过期
-        if (StrUtil.isEmpty(token) || isTokenExp(token)) {
+        if (StrUtil.isEmpty(token) || JwtTokenUtil.isTokenValid(token)) {
             return null;
         }
 
@@ -160,33 +159,6 @@ public class WebUtil {
         user.setGroupId(ObjectUtil.isNull(groupId)?null:groupId.toString());
 
         return user;
-    }
-
-    /**
-     * 判断token是否过期
-     *
-     * @param token 前端传过来的Token
-     * @return 是否过期
-     */
-    public static boolean isTokenExp(String token) {
-        /**
-         * 验证ToKen是否有效
-         */
-        try {
-            if (!JWTUtil.verify(token,SecurityConst.APPROVE_JWT_KEY.getBytes())) {
-                return false;
-            }
-        } catch (Exception ignore) {
-            return false;
-        }
-
-        JWT jwt = JWTUtil.parseToken(token);
-        Object exp = jwt.getPayload("exp");
-        if (ObjectUtil.isNull(exp)) {
-            return true;
-        }
-        DateTime expTime = new DateTime(Long.parseLong(exp.toString()));
-        return expTime.isBefore(new Date());
     }
 
     /**

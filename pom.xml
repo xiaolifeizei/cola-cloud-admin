@@ -31,6 +31,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <cola.cloud.version>1.0.0</cola.cloud.version>
         <spring.boot.version>2.6.3</spring.boot.version>
+        <hystrix.version>11.10</hystrix.version>
         <spring.cloud.version>2021.0.1</spring.cloud.version>
         <spring.cloud.oauth2.version>2.2.5.RELEASE</spring.cloud.oauth2.version>
         <spring.cloud.alibaba.version>2.2.8.RELEASE</spring.cloud.alibaba.version>
@@ -63,6 +64,11 @@
                 <version>${spring.cloud.alibaba.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.github.openfeign</groupId>
+                <artifactId>feign-hystrix</artifactId>
+                <version>${hystrix.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.baomidou</groupId>
@@ -128,6 +134,11 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-hystrix</artifactId>
         </dependency>
 
         <dependency>

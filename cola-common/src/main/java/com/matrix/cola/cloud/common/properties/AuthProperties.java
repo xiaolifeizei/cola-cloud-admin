@@ -1,6 +1,7 @@
-package com.matrix.cola.cloud.auth.properties;
+package com.matrix.cola.cloud.common.properties;
 
 import lombok.Data;
+import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 
@@ -18,9 +19,18 @@ import java.util.List;
 @ConfigurationProperties("cola.security")
 public class AuthProperties {
 
+    @Getter
+    private static List<String> defaultSkipUrl = new ArrayList<>();
+
+    static {
+        defaultSkipUrl.add("/oauth/token/**");
+        defaultSkipUrl.add("/favicon.ico");
+    }
+
     /**
      * 放行API集合
      */
     private List<String> skipUrl = new ArrayList<>();
+
 
 }

@@ -1,8 +1,10 @@
 package com.matrix.cola.cloud.auth.config;
 
 
+import com.matrix.cola.cloud.api.feign.system.login.LoginServiceFeign;
 import com.matrix.cola.cloud.auth.filter.AuthApproveFilter;
 import com.matrix.cola.cloud.auth.filter.TokenLoginFilter;
+import com.matrix.cola.cloud.auth.service.ClientDetailsServiceImpl;
 import com.matrix.cola.cloud.auth.service.SecurityUserDetailsServiceImpl;
 import com.matrix.cola.cloud.auth.support.ColaPasswordEncoderFactories;
 import com.matrix.cola.cloud.auth.support.RedisAuthorizationCodeServices;
@@ -23,6 +25,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.sql.DataSource;
+
 /**
  * 认证服务器Security配置
  *
@@ -34,11 +38,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @ConditionalOnProperty(prefix = "spring.application",name="name",havingValue = "cola-auth")
 public class AuthorizationServerWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final SecurityUserDetailsServiceImpl userDetailsService;
-
     private final CacheProxy cacheProxy;
 
     private final TokenUnAuthEntryPint tokenUnAuthEntryPint;
+
+    private final DataSource dataSource;
+
+    private LoginServiceFeign loginService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -81,11 +87,21 @@ public class AuthorizationServerWebSecurityConfig extends WebSecurityConfigurerA
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
     }
 
     @Bean
-    TokenLoginFilter tokenLoginFilter() {
+    public TokenLoginFilter tokenLoginFilter() {
         return new TokenLoginFilter(authenticationManagerBean());
+    }
+
+    @Bean
+    public ClientDetailsServiceImpl ClientDetailsServiceImpl() {
+        return new ClientDetailsServiceImpl(dataSource);
+    }
+
+    @Bean
+    public SecurityUserDetailsServiceImpl userDetailsService() {
+        return new SecurityUserDetailsServiceImpl(loginService);
     }
 }

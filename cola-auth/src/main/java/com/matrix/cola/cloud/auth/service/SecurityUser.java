@@ -68,6 +68,6 @@ public class SecurityUser implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return currentUser.getNoUse() != 1 ? true : false;
+        return currentUser.getNoUse() != null && currentUser.getNoUse() != 1;
     }
 }
