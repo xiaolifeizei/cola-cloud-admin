@@ -1,9 +1,9 @@
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\
 com.matrix.cola.cloud.common.config.NacosConfigBootstrapConfiguration
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.matrix.cola.cloud.common.aspect.ControllerLogAspect,\
 com.matrix.cola.cloud.common.config.RedisConfiguration,\
 com.matrix.cola.cloud.common.config.WebConfiguration,\
 com.matrix.cola.cloud.common.config.DruidConfig,\
 com.matrix.cola.cloud.common.config.MybatisPlusConfig,\
-com.matrix.cola.cloud.common.aspect.ControllerLogAspect,\
 com.matrix.cola.cloud.common.config.PropertiesConfig

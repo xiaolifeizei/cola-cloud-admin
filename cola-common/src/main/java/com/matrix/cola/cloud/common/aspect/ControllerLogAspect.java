@@ -28,7 +28,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.DefaultParameterNameDiscoverer;
@@ -62,7 +61,6 @@ import java.util.concurrent.TimeUnit;
 @Aspect
 @Configuration
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
-@ConditionalOnProperty(value = "cola.log.controller.enabled", havingValue = "true", matchIfMissing = true)
 public class ControllerLogAspect {
 
 	private final ObjectMapper objectMapper;
@@ -82,9 +80,10 @@ public class ControllerLogAspect {
 	 * @throws Throwable 异常
 	 */
 	@Around(
-		"execution(!static * *(..)) && " +
+		"(execution(!static * *(..)) && " +
 			"(@within(org.springframework.stereotype.Controller) || " +
-			"@within(org.springframework.web.bind.annotation.RestController))"
+			"@within(org.springframework.web.bind.annotation.RestController))) " +
+			"|| execution(!static * com.matrix.cola.cloud.common.controller..*.*(..)))"
 	)
 	public Object aroundApi(ProceedingJoinPoint point) throws Throwable {
 		MethodSignature ms = (MethodSignature) point.getSignature();

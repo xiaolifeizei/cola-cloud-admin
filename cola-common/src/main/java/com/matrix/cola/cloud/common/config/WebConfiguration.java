@@ -6,7 +6,9 @@ import com.matrix.cola.cloud.common.error.GlobalErrorAttributes;
 import com.matrix.cola.cloud.common.error.GlobalErrorController;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.condition.*;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
@@ -45,5 +47,4 @@ public class WebConfiguration {
 	public BasicErrorController basicErrorController(ErrorAttributes errorAttributes) {
 		return new GlobalErrorController(errorAttributes, serverProperties.getError());
 	}
-
 }

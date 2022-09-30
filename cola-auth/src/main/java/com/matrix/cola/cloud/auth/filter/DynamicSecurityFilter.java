@@ -13,6 +13,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 动态权限过滤器
@@ -38,7 +40,10 @@ public class DynamicSecurityFilter extends OncePerRequestFilter {
         }
         //白名单请求直接放行
         PathMatcher pathMatcher = new AntPathMatcher();
-        for (String path : authProperties.getSkipUrl()) {
+        List<String> skipUrl = new ArrayList<>();
+        skipUrl.addAll(AuthProperties.getDefaultSkipUrl());
+        skipUrl.addAll(authProperties.getSkipUrl());
+        for (String path : skipUrl) {
             if(pathMatcher.match(path,request.getRequestURI())){
                 request.setAttribute(FILTER_APPLIED, Boolean.TRUE);
                 chain.doFilter(request,response);

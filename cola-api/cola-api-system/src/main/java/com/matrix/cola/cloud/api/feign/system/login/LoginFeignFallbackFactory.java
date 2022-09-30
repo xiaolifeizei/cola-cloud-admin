@@ -25,7 +25,7 @@ public class LoginFeignFallbackFactory implements FallbackFactory<LoginServiceFe
             public UserEntity getUserByLoginName(String loginName) {
                 UserEntity userEntity = new UserEntity();
                 userEntity.setLoginName("Service Fallback");
-                userEntity.setNoUse(ColaConstant.YES);
+                userEntity.setNoUse(ColaConstant.NO);
                 return userEntity;
             }
 

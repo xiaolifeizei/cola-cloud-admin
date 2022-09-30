@@ -21,5 +21,4 @@ public class UserController extends AbstractColaController<UserEntity, UserEntit
     public UserController(UserService service, UserWrapper wrapperService) {
         super(service, wrapperService);
     }
-
 }

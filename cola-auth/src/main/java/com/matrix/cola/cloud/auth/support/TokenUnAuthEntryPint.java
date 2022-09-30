@@ -28,6 +28,6 @@ public class TokenUnAuthEntryPint implements AuthenticationEntryPoint {
         } else {
             msg += authException.getMessage();
         }
-        ResponseUtil.out(response, Result.err(response.getStatus(),msg));
+        ResponseUtil.out(response, Result.err(msg));
     }
 }
