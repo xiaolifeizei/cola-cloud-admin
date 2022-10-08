@@ -12,7 +12,7 @@ import com.matrix.cola.cloud.api.entity.system.role.RoleEntityWrapper;
  * @author : cui_feng
  * @since : 2022-05-31 15:56
  */
-public interface RoleWrapper extends BaseColaEntityWrapperService<RoleEntity, RoleEntityWrapper> {
+public interface RoleWrapperService extends BaseColaEntityWrapperService<RoleEntity, RoleEntityWrapper> {
 
     Result getRoleTree(Query<RoleEntity> query);
 }

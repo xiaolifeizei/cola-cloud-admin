@@ -1,4 +1,4 @@
-package com.matrix.cola.cloud.auth.interceptor;
+package com.matrix.cola.cloud.common.interceptor;
 
 import cn.hutool.core.util.StrUtil;
 import com.matrix.cola.cloud.common.utils.WebUtil;

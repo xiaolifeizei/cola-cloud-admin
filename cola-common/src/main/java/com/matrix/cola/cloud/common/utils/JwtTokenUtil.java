@@ -87,7 +87,7 @@ public class JwtTokenUtil {
         if (ObjectUtil.isNull(exp)) {
             return true;
         }
-        DateTime expTime = new DateTime(Long.parseLong(exp.toString()));
+        DateTime expTime = new DateTime(Long.parseLong(exp.toString()) * 1000L);
         return expTime.isBefore(new Date());
     }
 }

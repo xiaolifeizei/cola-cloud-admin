@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -66,7 +67,9 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)//关闭Session
             .and()
                 .authorizeRequests()
-                    .antMatchers("/login/**")
+                    .antMatchers(HttpMethod.OPTIONS, "/**")
+                        .permitAll()
+                    .antMatchers("/login/getUserByLoginName","/login/getUserRoleCodeList")
                         .permitAll()
                     .anyRequest()
                         .authenticated();// 其他所有访问需要鉴权认证

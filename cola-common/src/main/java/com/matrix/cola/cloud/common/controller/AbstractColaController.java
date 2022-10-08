@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * controller父类
+ * 封装EntityWrapper的查询和ColaEntity的增删改查方法
  *
  * @author : cui_feng
  * @since : 2022-09-07 17:11

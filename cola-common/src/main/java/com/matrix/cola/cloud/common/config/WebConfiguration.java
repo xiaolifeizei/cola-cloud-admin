@@ -4,6 +4,9 @@ package com.matrix.cola.cloud.common.config;
 
 import com.matrix.cola.cloud.common.error.GlobalErrorAttributes;
 import com.matrix.cola.cloud.common.error.GlobalErrorController;
+import com.matrix.cola.cloud.common.interceptor.Oauth2TokenFeignClientInterceptor;
+import feign.Logger;
+import feign.RequestInterceptor;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -46,5 +49,15 @@ public class WebConfiguration {
 	@ConditionalOnMissingBean(value = ErrorController.class, search = SearchStrategy.CURRENT)
 	public BasicErrorController basicErrorController(ErrorAttributes errorAttributes) {
 		return new GlobalErrorController(errorAttributes, serverProperties.getError());
+	}
+
+	@Bean
+	public RequestInterceptor Oauth2TokenFeignClientInterceptor () {
+		return new Oauth2TokenFeignClientInterceptor();
+	}
+
+	@Bean
+	Logger.Level feignLogLevel() {
+		return Logger.Level.FULL;
 	}
 }

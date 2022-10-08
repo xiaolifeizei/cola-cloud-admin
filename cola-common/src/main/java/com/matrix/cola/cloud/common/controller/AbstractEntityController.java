@@ -1,9 +1,9 @@
 package com.matrix.cola.cloud.common.controller;
 
 import com.matrix.cola.cloud.api.common.Result;
-import com.matrix.cola.cloud.api.common.entity.BaseColaEntity;
+import com.matrix.cola.cloud.api.common.entity.BaseEntity;
 import com.matrix.cola.cloud.api.common.entity.Query;
-import com.matrix.cola.cloud.api.common.service.BaseColaEntityService;
+import com.matrix.cola.cloud.api.common.service.BaseEntityService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -11,27 +11,22 @@ import java.util.List;
 
 /**
  * controller父类
- * 封装了ColaEntity的增删改查方法
+ * 封装了Entity的增删改查方法
  *
  * @author : cui_feng
  * @since : 2022-09-07 14:12
  */
-public abstract class AbstractColaEntityController<T extends BaseColaEntity,S extends BaseColaEntityService<T>> {
+public abstract class AbstractEntityController<T extends BaseEntity,S extends BaseEntityService<T>> {
 
     protected final S service;
 
-    public AbstractColaEntityController(S service) {
+    public AbstractEntityController(S service) {
         this.service = service;
     }
 
-    @PostMapping("/getOneById")
-    public T getOne(Long id) {
-        return service.getOne(id);
-    }
-
     @PostMapping("/getOne")
-    public T getOne(@RequestBody T entity) {
-        return service.getOne(entity);
+    public T getOne(@RequestBody Query<T> query) {
+        return service.getOne(query);
     }
 
     @PostMapping("/getPage")

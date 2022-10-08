@@ -1,6 +1,7 @@
 package com.matrix.cola.cloud.auth.config;
 
 
+import com.matrix.cola.cloud.api.feign.system.datalog.DataLogServiceFeign;
 import com.matrix.cola.cloud.api.feign.system.login.LoginServiceFeign;
 import com.matrix.cola.cloud.auth.filter.AuthApproveFilter;
 import com.matrix.cola.cloud.auth.filter.TokenLoginFilter;
@@ -46,6 +47,8 @@ public class AuthorizationServerWebSecurityConfig extends WebSecurityConfigurerA
 
     private LoginServiceFeign loginService;
 
+    private DataLogServiceFeign dataLogServiceFeign;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return ColaPasswordEncoderFactories.createDelegatingPasswordEncoder();
@@ -69,7 +72,10 @@ public class AuthorizationServerWebSecurityConfig extends WebSecurityConfigurerA
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-                .anyRequest().authenticated()
+                .antMatchers("/oauth/token")
+                    .permitAll()
+                .anyRequest()
+                    .authenticated()
             .and()
                 .formLogin()
             .and()
@@ -102,6 +108,6 @@ public class AuthorizationServerWebSecurityConfig extends WebSecurityConfigurerA
 
     @Bean
     public SecurityUserDetailsServiceImpl userDetailsService() {
-        return new SecurityUserDetailsServiceImpl(loginService);
+        return new SecurityUserDetailsServiceImpl(loginService, dataLogServiceFeign);
     }
 }
