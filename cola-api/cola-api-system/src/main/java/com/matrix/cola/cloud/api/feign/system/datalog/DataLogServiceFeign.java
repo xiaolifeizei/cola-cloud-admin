@@ -1,12 +1,11 @@
 package com.matrix.cola.cloud.api.feign.system.datalog;
 
-import com.matrix.cola.cloud.api.common.Result;
-import com.matrix.cola.cloud.api.common.entity.BaseColaEntity;
 import com.matrix.cola.cloud.api.common.feign.BaseColaFeign;
+import com.matrix.cola.cloud.api.entity.system.datalog.DataLogEntity;
 import com.matrix.cola.cloud.api.entity.system.errorlog.ErrorLogEntity;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * 系统错误日志
@@ -18,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface DataLogServiceFeign extends BaseColaFeign<ErrorLogEntity> {
 
     @PostMapping("/addUpdateLog")
-    Result addUpdateLog(@RequestParam String tableName, @RequestParam BaseColaEntity before, @RequestParam BaseColaEntity after);
+    void addUpdateLog(@RequestBody DataLogEntity dataLogEntity);
 
     @PostMapping("/addDeleteLog")
-    Result addDeleteLog(@RequestParam String tableName, @RequestParam BaseColaEntity before);
+    void addDeleteLog(@RequestBody DataLogEntity dataLogEntity);
 }

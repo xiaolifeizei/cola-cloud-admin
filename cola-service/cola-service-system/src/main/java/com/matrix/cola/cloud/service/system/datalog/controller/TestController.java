@@ -1,6 +1,6 @@
 package com.matrix.cola.cloud.service.system.datalog.controller;
 
-import com.matrix.cola.cloud.api.common.Result;
+import com.matrix.cola.cloud.api.entity.system.datalog.DataLogEntity;
 import com.matrix.cola.cloud.api.entity.system.user.UserEntity;
 import com.matrix.cola.cloud.api.feign.system.datalog.DataLogServiceFeign;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,6 @@ public class TestController {
 
     @PostMapping("/test")
     public void test() {
-       Result result =  dataLogServiceFeign.addDeleteLog("system_user",new UserEntity());
-        System.out.println(result.getMsg());
+       dataLogServiceFeign.addDeleteLog(DataLogEntity.createDeleteLog("测试一下", new UserEntity()));
     }
 }

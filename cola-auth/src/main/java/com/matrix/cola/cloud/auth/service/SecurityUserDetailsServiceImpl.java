@@ -3,7 +3,6 @@ package com.matrix.cola.cloud.auth.service;
 import cn.hutool.core.util.ObjectUtil;
 import com.matrix.cola.cloud.api.common.ColaConstant;
 import com.matrix.cola.cloud.api.entity.system.user.UserEntity;
-import com.matrix.cola.cloud.api.feign.system.datalog.DataLogServiceFeign;
 import com.matrix.cola.cloud.api.feign.system.login.LoginServiceFeign;
 import com.matrix.cola.cloud.common.utils.SecurityConst;
 import lombok.AllArgsConstructor;
@@ -25,8 +24,6 @@ public class SecurityUserDetailsServiceImpl implements UserDetailsService {
 
     LoginServiceFeign loginService;
 
-    DataLogServiceFeign dataLogServiceFeign;
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException  {
 
@@ -35,8 +32,6 @@ public class SecurityUserDetailsServiceImpl implements UserDetailsService {
         if (userPO == null) {
             throw new UsernameNotFoundException("用户名或密码验证失败");
         }
-
-        dataLogServiceFeign.addDeleteLog("测试一下", new UserEntity());
 
         // 获取当前用户的角色编码
         List<String> roleCodeList = loginService.getUserRoleCodeList(userPO.getId());

@@ -69,7 +69,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .authorizeRequests()
                     .antMatchers(HttpMethod.OPTIONS, "/**")
                         .permitAll()
-                    .antMatchers("/login/getUserByLoginName","/login/getUserRoleCodeList")
+                    .antMatchers("/login/getUserByLoginName","/login/getUserRoleCodeList","/errorLog/**","/dataLog/**")
                         .permitAll()
                     .anyRequest()
                         .authenticated();// 其他所有访问需要鉴权认证

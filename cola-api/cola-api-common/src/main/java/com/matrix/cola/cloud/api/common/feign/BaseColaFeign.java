@@ -15,37 +15,23 @@ import java.util.List;
 public interface BaseColaFeign<T extends BaseEntity> {
 
     @PostMapping("/getOneById")
-    default T getOne(@RequestParam Long id){
-        return null;
-    }
+    T getOne(@RequestParam Long id);
 
     @PostMapping("/getOne")
-    default T getOne(@RequestBody T entity) {
-        return null;
-    }
+    T getOne(@RequestBody T entity);
 
     @PostMapping("/getOneByQuery")
-    default T getOne(@RequestBody Query<T> query) {
-        return null;
-    }
+    T getOne(@RequestBody Query<T> query);
 
     @PostMapping("/getEntityList")
-    default List<T> getEntityList(@RequestBody Query<T> query) {
-        return null;
-    }
+    List<T> getEntityList(@RequestBody Query<T> query);
 
     @PostMapping("/add")
-    default Result add(@RequestBody T entity) {
-        return Result.err("接口调用失败");
-    }
+    Result add(@RequestBody T entity);
 
     @PostMapping("/update")
-    default Result update(@RequestBody T entity) {
-        return Result.err("接口调用失败");
-    }
+    Result update(@RequestBody T entity);
 
     @PostMapping("/delete")
-    default Result delete(@RequestBody T entity) {
-        return Result.err("接口调用失败");
-    }
+    Result delete(@RequestBody T entity);
 }

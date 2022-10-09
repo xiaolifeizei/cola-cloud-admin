@@ -1,14 +1,16 @@
 package com.matrix.cola.cloud.service.system.datalog.controller;
 
 import com.matrix.cola.cloud.api.common.Result;
-import com.matrix.cola.cloud.api.common.entity.BaseColaEntity;
 import com.matrix.cola.cloud.api.entity.system.datalog.DataLogEntity;
 import com.matrix.cola.cloud.api.entity.system.datalog.DataLogEntityWrapper;
 import com.matrix.cola.cloud.common.controller.AbstractColaController;
 import com.matrix.cola.cloud.service.system.datalog.service.DataLogService;
 import com.matrix.cola.cloud.service.system.datalog.service.DataLogWrapperService;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 系统日志Controller
@@ -39,14 +41,12 @@ public class DataLogController extends AbstractColaController<DataLogEntity, Dat
     }
 
     @PostMapping("/addUpdateLog")
-    public Result addUpdateLog(@RequestParam String tableName, @RequestParam BaseColaEntity before, @RequestParam BaseColaEntity after) {
-        service.addUpdateLog(tableName, before, after);
-        return Result.ok();
+    public void addUpdateLog(@RequestBody DataLogEntity dataLogEntity) {
+        service.addUpdateLog(dataLogEntity);
     }
 
     @PostMapping("/addDeleteLog")
-    public Result addDeleteLog(@RequestParam String tableName, @RequestParam BaseColaEntity before) {
-        service.addDeleteLog(tableName, before);
-        return Result.ok();
+    public void addDeleteLog(@RequestBody DataLogEntity dataLogEntity) {
+        service.addDeleteLog(dataLogEntity);
     }
 }

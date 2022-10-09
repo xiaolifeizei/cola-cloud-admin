@@ -84,4 +84,42 @@ public class DataLogServiceImpl extends AbstractColaEntityService<DataLogEntity,
         getMapper().clearDataLog();
         return Result.ok();
     }
+
+    @Override
+    public void addUpdateLog(DataLogEntity dataLogEntity) {
+        try {
+            if (ObjectUtil.isNull(dataLogEntity)) {
+                return;
+            }
+            dataLogEntity.setOperation("更新");
+            dataLogEntity.setCreateTime(new Date());
+            add(dataLogEntity);
+        } catch (Exception e) {
+            log.error("记录更新日志失败");
+            log.error(e.getMessage());
+            StringWriter stringWriter = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(stringWriter);
+            e.printStackTrace(printWriter);
+            log.error(stringWriter.toString());
+        }
+    }
+
+    @Override
+    public void addDeleteLog(DataLogEntity dataLogEntity) {
+        try {
+            if (ObjectUtil.isNull(dataLogEntity)) {
+                return;
+            }
+            dataLogEntity.setOperation("删除");
+            dataLogEntity.setCreateTime(new Date());
+            add(dataLogEntity);
+        } catch (Exception e) {
+            log.error("记录删除日志失败");
+            log.error(e.getMessage());
+            StringWriter stringWriter = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(stringWriter);
+            e.printStackTrace(printWriter);
+            log.error(stringWriter.toString());
+        }
+    }
 }

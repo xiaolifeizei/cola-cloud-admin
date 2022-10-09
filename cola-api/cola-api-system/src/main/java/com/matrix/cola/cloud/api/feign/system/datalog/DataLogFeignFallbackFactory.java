@@ -1,8 +1,10 @@
 package com.matrix.cola.cloud.api.feign.system.datalog;
 
-import com.matrix.cola.cloud.api.common.Result;
-import com.matrix.cola.cloud.api.common.entity.BaseColaEntity;
+import com.matrix.cola.cloud.api.common.feign.AbstractFeignFallbackFactory;
+import com.matrix.cola.cloud.api.entity.system.datalog.DataLogEntity;
+import com.matrix.cola.cloud.api.entity.system.errorlog.ErrorLogEntity;
 import feign.hystrix.FallbackFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,22 +14,23 @@ import org.springframework.stereotype.Component;
  * @since : 2022-10-08 16:41
  */
 @Component
-public class DataLogFeignFallbackFactory implements FallbackFactory<DataLogServiceFeign> {
+@Slf4j
+public class DataLogFeignFallbackFactory extends AbstractFeignFallbackFactory<ErrorLogEntity> implements DataLogServiceFeign,FallbackFactory<DataLogServiceFeign> {
 
     @Override
     public DataLogServiceFeign create(Throwable cause) {
-        return new DataLogServiceFeign() {
+        cause.printStackTrace();
+        log.error(cause.getMessage());
+        return new DataLogFeignFallbackFactory();
+    }
 
-            @Override
-            public Result addUpdateLog(String tableName, BaseColaEntity before, BaseColaEntity after) {
-                return Result.ok();
-            }
+    @Override
+    public void addUpdateLog(DataLogEntity dataLogEntity) {
 
-            @Override
-            public Result addDeleteLog(String tableName, BaseColaEntity before) {
-                System.out.println(cause);
-                return Result.ok();
-            }
-        };
+    }
+
+    @Override
+    public void addDeleteLog(DataLogEntity dataLogEntity) {
+
     }
 }

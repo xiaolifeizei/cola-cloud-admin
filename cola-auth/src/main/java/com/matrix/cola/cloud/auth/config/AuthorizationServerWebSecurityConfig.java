@@ -47,7 +47,6 @@ public class AuthorizationServerWebSecurityConfig extends WebSecurityConfigurerA
 
     private LoginServiceFeign loginService;
 
-    private DataLogServiceFeign dataLogServiceFeign;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -108,6 +107,6 @@ public class AuthorizationServerWebSecurityConfig extends WebSecurityConfigurerA
 
     @Bean
     public SecurityUserDetailsServiceImpl userDetailsService() {
-        return new SecurityUserDetailsServiceImpl(loginService, dataLogServiceFeign);
+        return new SecurityUserDetailsServiceImpl(loginService);
     }
 }

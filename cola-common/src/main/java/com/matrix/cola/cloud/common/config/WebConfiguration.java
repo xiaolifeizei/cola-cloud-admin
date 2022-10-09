@@ -2,6 +2,8 @@
 package com.matrix.cola.cloud.common.config;
 
 
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.matrix.cola.cloud.common.error.GlobalErrorAttributes;
 import com.matrix.cola.cloud.common.error.GlobalErrorController;
 import com.matrix.cola.cloud.common.interceptor.Oauth2TokenFeignClientInterceptor;
@@ -12,6 +14,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.condition.SearchStrategy;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
@@ -22,6 +25,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.TimeZone;
 
 /**
  * 统一异常处理
@@ -59,5 +66,25 @@ public class WebConfiguration {
 	@Bean
 	Logger.Level feignLogLevel() {
 		return Logger.Level.FULL;
+	}
+
+	/**
+	 * 配置Json解析时区和日期时间格式
+	 * @return 自定义JacksonObjectMapperBuilder
+	 */
+	@Bean
+	public Jackson2ObjectMapperBuilderCustomizer jacksonObjectMapperCustomization() {
+
+		final String dateFormat = "yyyy-MM-dd";
+		final String dateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+		SimpleDateFormat format = new SimpleDateFormat(dateTimeFormat);
+
+		return builder -> {
+			builder.dateFormat(format);
+			builder.simpleDateFormat(dateTimeFormat);
+			builder.timeZone(TimeZone.getDefault());
+			builder.serializers(new LocalDateSerializer(DateTimeFormatter.ofPattern(dateFormat)));
+			builder.serializers(new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(dateTimeFormat)));
+		};
 	}
 }

@@ -17,6 +17,7 @@
 package com.matrix.cola.cloud.common.aspect;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -210,7 +211,7 @@ public class ControllerLogAspect {
 				}
 				errorLog.setUrl(url);
 				String token = WebUtil.getToken();
-				if (token.length()>400) {
+				if (ObjectUtil.isNotNull(token) && token.length()>400) {
 					token = token.substring(0,400);
 				}
 				errorLog.setToken(token);
@@ -223,8 +224,8 @@ public class ControllerLogAspect {
 					}
 					errorLog.setParam(param);
 				}
-				String title = error.getMessage();
-				if (title.length()>1000) {
+				String title = error.getMessage() == null ? error.toString() : error.getMessage();
+				if (ObjectUtil.isNotNull(title) && title.length()>1000) {
 					title = title.substring(0,1000);
 				}
 				errorLog.setTitle(title);
