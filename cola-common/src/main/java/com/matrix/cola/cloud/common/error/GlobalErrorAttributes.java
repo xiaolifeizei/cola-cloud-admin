@@ -34,6 +34,7 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
 	 * @return null
 	 */
 	public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler,Exception ex) {
+		log.error(ex.getMessage());
 		ex.printStackTrace();
 		Map<String, Object> body = BeanUtil.beanToMap(Result.err("哎呀！系统出错了"));
 		MappingJackson2JsonView view = new MappingJackson2JsonView();

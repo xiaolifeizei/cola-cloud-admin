@@ -21,6 +21,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -79,6 +80,9 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public List<String> getUserRoleCodeList(Long userid) {
+        if (userid == null) {
+            return Collections.emptyList();
+        }
         // 从缓存中获取
         return cacheProxy.getObjectFromLoader(ColaCacheName.USER_ROLE_CODES,userid.toString(),()->{
             return getRoleCodeList(userid);

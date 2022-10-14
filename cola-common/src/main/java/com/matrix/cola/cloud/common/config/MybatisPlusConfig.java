@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerIntercept
 import com.matrix.cola.cloud.common.interceptor.ColaBlockAttackInnerInterceptor;
 import com.matrix.cola.cloud.common.interceptor.DataScopeInterceptor;
 import com.matrix.cola.cloud.common.interceptor.DataScopeQueryProcessor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
  * @since : 2022-04-11 15:12
  */
 @Configuration
+@ConditionalOnClass(name = "com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration")
 public class MybatisPlusConfig {
 
 

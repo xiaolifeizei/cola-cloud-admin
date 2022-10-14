@@ -11,9 +11,8 @@ import com.matrix.cola.cloud.api.common.service.ColaCacheName;
 import com.matrix.cola.cloud.api.entity.system.datascope.DataScopeEntity;
 import com.matrix.cola.cloud.api.entity.system.user.UserEntity;
 import com.matrix.cola.cloud.common.cache.CacheProxy;
+import com.matrix.cola.cloud.common.properties.DataScopeProperties;
 import com.matrix.cola.cloud.common.utils.WebUtil;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Alias;
@@ -29,10 +28,8 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -44,38 +41,9 @@ import java.util.List;
  * @since : 2022-06-05 15:42
  */
 @Slf4j
-@ConfigurationProperties(prefix = "cola.data-scope")
 public class DataScopeInterceptor implements InnerInterceptor {
 
-    /**
-     * 是否开启数据权限
-     */
-    @Setter
-    @Getter
-    private boolean enabled = true;
-    /**
-     * 是否开启默认的数据权限，默认不开启，默认的数据权限类型为本机构及下级机构
-     */
-    @Getter
-    @Setter
-    private boolean enableDefault = false;
-    /**
-     * 忽略数据权限的表
-     */
-    @Setter
-    @Getter
-    private List<String> ignoreTables = new ArrayList<>();
-    /**
-     * 默认忽略数据权限的表名
-     */
-    private final List<String> defaultIgnoreTables = Arrays.asList(
-            "system_dict",
-            "system_err_log",
-            "system_data_log",
-            "system_group",
-            "system_role_user",
-            "system_role_menu",
-            "system_data_scope");
+    private DataScopeProperties dataScopeProperties;
     /**
      * 数据权限处理器
      */
@@ -83,6 +51,10 @@ public class DataScopeInterceptor implements InnerInterceptor {
     private CacheProxy cacheProxy;
 
 
+    @Autowired
+    public void setDataScopeProperties(DataScopeProperties dataScopeProperties) {
+        this.dataScopeProperties = dataScopeProperties;
+    }
 
     @Autowired
     public void setDataScopeProcessor(DataScopeQueryProcessor dataScopeProcessor) {
@@ -98,7 +70,7 @@ public class DataScopeInterceptor implements InnerInterceptor {
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
 
         // 数据权限开关
-        if (!enabled) {
+        if (!dataScopeProperties.isEnabled()) {
             return;
         }
 
@@ -137,13 +109,13 @@ public class DataScopeInterceptor implements InnerInterceptor {
         String mainTableName = fromItemAlias == null ? fromItem.getName() : fromItemAlias.getName();
 
         // 忽略的
-        if (ignoreTables.contains(fromItem.getName()) || defaultIgnoreTables.contains(fromItem.getName().toLowerCase())) {
+        if (dataScopeProperties.getIgnoreTables().contains(fromItem.getName()) || dataScopeProperties.getDefaultIgnoreTables().contains(fromItem.getName().toLowerCase())) {
             return;
         }
 
         // 没有数据权限则跳过
         if (ObjectUtil.isEmpty(scopeMap)) {
-            if (enableDefault) {
+            if (dataScopeProperties.isEnableDefault()) {
                 dataScopeQueryProcessor.processDefault(statement,plainSelect,where,mainTableName,boundSql);
             }
             return;
@@ -152,7 +124,7 @@ public class DataScopeInterceptor implements InnerInterceptor {
         List<DataScopeEntity> dataScopeList = scopeMap.get(ms.getId());
         // 没有获取到对应的数据权限则跳过
         if (ObjectUtil.isEmpty(dataScopeList)) {
-            if (enableDefault) {
+            if (dataScopeProperties.isEnableDefault()) {
                 dataScopeQueryProcessor.processDefault(statement,plainSelect,where,mainTableName,boundSql);
             }
             return;
@@ -209,7 +181,7 @@ public class DataScopeInterceptor implements InnerInterceptor {
                 // 没有匹配到数据权限
                 if (!isMatched) {
                     // 默认处理
-                    if (enableDefault) {
+                    if (dataScopeProperties.isEnableDefault()) {
                         dataScopeQueryProcessor.processDefault(statement,plainSelect,where,mainTableName,boundSql);
                     }
                 }

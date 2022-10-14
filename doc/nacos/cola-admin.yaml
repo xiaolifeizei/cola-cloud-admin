@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/cola?serverTimezone=UTC&autoReconnect=true&useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: root
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      # 初始连接数
+      initial-size: 10
+      # 最大连接数
+      max-active: 100
+      # 慢SQL
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      # 配置过滤器
+      filters: stat,wall,slf4j
+  redis:
+    host: localhost
+    port: 6379
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #控制台打印sql
+  mapper-locations: classpath*:com/matrix/cola/cloud/service/**/**/mapper/*Mapper.xml
+
+feign:
+  sentinel:
+    enabled: true
+  hystrix:
+    enabled: true

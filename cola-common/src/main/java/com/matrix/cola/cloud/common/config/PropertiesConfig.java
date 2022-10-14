@@ -1,6 +1,7 @@
 package com.matrix.cola.cloud.common.config;
 
 import com.matrix.cola.cloud.common.properties.AuthProperties;
+import com.matrix.cola.cloud.common.properties.DataScopeProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -20,5 +21,11 @@ public class PropertiesConfig {
     @RefreshScope
     public AuthProperties authProperties() {
         return new AuthProperties();
+    }
+
+    @Bean
+    @RefreshScope
+    public DataScopeProperties dataScopeProperties() {
+        return new DataScopeProperties();
     }
 }
